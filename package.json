@@ -1,0 +1,68 @@
+{
+    "name": "poe-league-sheriff",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "node -r tsconfig-paths/register dist/index.js",
+        "start:dev": "ts-node -r tsconfig-paths/register src/core/index.ts",
+        "serve:dev": "nodemon ./src/app/App.ts",
+        "lint": "eslint --cache -f unix --ext .ts src/",
+        "lint:fix": "eslint --fix --cache -f unix --ext .ts src/",
+        "prettier": "prettier --write \"**/*.ts\""
+    },
+    "keywords": [],
+    "author": {
+        "name": "Tobias Hoffmann",
+        "email": "tobiashoffmann7@gmail.com",
+        "url": "http://github.com/klayver"
+    },
+    "license": "MIT",
+    "devDependencies": {
+        "@types/config": "0.0.36",
+        "@types/express": "^4.17.2",
+        "@types/lowdb": "^1.0.9",
+        "@types/luxon": "^1.21.0",
+        "@types/node": "^13.7.0",
+        "@types/node-sass-middleware": "0.0.31",
+        "@types/signale": "^1.2.1",
+        "@types/url-join": "^4.0.0",
+        "@typescript-eslint/eslint-plugin": "^2.18.0",
+        "@typescript-eslint/parser": "^2.18.0",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^6.10.0",
+        "nodemon": "^2.0.2",
+        "prettier": "^1.19.1",
+        "ts-node": "^8.6.2",
+        "tsconfig-paths": "^3.9.0",
+        "typescript": "^3.7.5"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-free": "^5.12.1",
+        "axios": "^0.19.2",
+        "bootstrap": "^4.4.1",
+        "bottleneck": "^2.19.5",
+        "config": "^3.2.5",
+        "ejs": "^3.0.1",
+        "express": "^4.17.1",
+        "lowdb": "^1.0.0",
+        "luxon": "^1.22.0",
+        "node-sass-middleware": "^0.11.0",
+        "signale": "^1.4.0",
+        "url-join": "^4.0.1"
+    },
+    "signale": {
+        "displayScope": true,
+        "displayBadge": true,
+        "displayDate": false,
+        "displayFilename": false,
+        "displayLabel": true,
+        "displayTimestamp": true,
+        "underlineLabel": false,
+        "underlineMessage": false,
+        "underlinePrefix": false,
+        "underlineSuffix": false,
+        "uppercaseLabel": false
+    }
+}

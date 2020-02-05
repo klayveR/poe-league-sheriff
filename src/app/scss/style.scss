@@ -1,0 +1,88 @@
+// Bootstrap
+// $enable-gradients: true;
+
+$theme-colors: (
+    "darker": #292e33,
+    "primary": #57d0d9,
+    "success": #9ee35d,
+    "warning": #f0f067,
+    "danger": #f07969,
+);
+
+.sticky-top {
+    max-height: 100vh;
+    overflow: auto;
+}
+
+.sticky-top::-webkit-scrollbar {
+    display: none;
+}
+
+.sticky-top {
+    scrollbar-width: none;
+}
+
+tr.clickable-row {
+    cursor: pointer;
+}
+
+.rule-name {
+    text-transform: capitalize;
+    font-weight: bold;
+}
+
+// Font-Awesome
+$fa-font-path: "webfonts";
+
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
+@import "node_modules/@fortawesome/fontawesome-free/scss/solid";
+
+// Pagination
+ul.simple-pagination {
+    list-style: none;
+}
+
+.simple-pagination {
+    display: block;
+    overflow: hidden;
+    padding: 0 5px 5px 0;
+    margin: 0 10px;
+}
+
+.simple-pagination ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.simple-pagination li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    float: left;
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: map-get($theme-colors, light);
+    background-color: map-get($theme-colors, darker) !important;
+    border: 1px solid map-get($theme-colors, dark) !important;
+}
+
+.page-link {
+    position: initial;
+    display: initial;
+    padding: initial;
+    margin-left: initial;
+    border-style: none !important;
+    color: map-get($theme-colors, light);
+    background-color: map-get($theme-colors, darker) !important;
+}
+
+.page-link:hover,
+.page-link:active,
+li > .current {
+    color: map-get($theme-colors, secondary);
+}

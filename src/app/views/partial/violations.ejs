@@ -1,0 +1,43 @@
+<% 
+    for(const violation of violations) { 
+    if(violation.resolved == null) { 
+    %>
+<div class="card text-white bg-darker mb-1">
+    <div class="card-body">
+        <h5 class="card-title"><%= violation.display %></h5>
+        <h6 class="card-subtitle mb-2 text-muted">
+            Rule: <span class="rule-name"><%= violation.rule %></span>
+            <span class="badge badge-warning">
+                <i class="fas fa-xs fa-exclamation-triangle"></i> Active
+            </span>
+        </h6>
+        <p class="card-text">
+            <i class="fas fa-clock fa-xs"></i> <%= violation.occured.time %>
+            <span class="text-muted">at </span>
+            Level <%= violation.occured.level %>
+            <span class="text-muted">(<%= violation.occured.experience %>)</span>
+        </p>
+    </div>
+</div>
+<% } else { %>
+<div class="card text-white bg-darker mb-1">
+    <div class="card-body">
+        <h5 class="card-title"><%= violation.display %></h5>
+        <h6 class="card-subtitle mb-2 text-muted">
+            Rule: <span class="rule-name"><%= violation.rule %></span>
+            <span class="badge badge-success">
+                <i class="fas fa-xs fa-check"></i> Resolved
+            </span>
+        </h6>
+        <p class="card-text">
+            <span class="text-muted">Resolved after</span>
+            <i class="fas fa-clock fa-xs"></i> <%= violation.resolved.time %><br />
+            <span class="text-muted">Violated between</span>
+            Level <%= violation.occured.level %> (<%= violation.occured.experience %>)
+            <span class="text-muted"> and </span>
+            Level <%= violation.resolved.level %> (<%= violation.resolved.experience %>)
+        </p>
+    </div>
+</div>
+<% } %>
+<% } %>

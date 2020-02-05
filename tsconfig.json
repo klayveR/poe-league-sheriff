@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "es2019",
+        "lib": ["esnext.array"],
+        "module": "commonjs",
+        "declaration": true,
+        "outDir": "./dist",
+        "resolveJsonModule": true,
+        "strict": true,
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        },
+        "esModuleInterop": true
+    },
+    "include": ["src/**/*.ts"]
+}
