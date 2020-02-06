@@ -1,25 +1,22 @@
 import low, { LowdbAsync } from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileAsync";
 
-import { LadderCharacter } from "@/core/models";
-import { RuleViolation } from "@/core/models/RuleViolation";
-import { DatabaseStructure, DatabaseViolation } from "@/shared/models/DatabaseStructure";
+import { LadderCharacter, RuleViolation } from "@/core/models";
+import { signale } from "@/core/modules/Logger";
+import { DatabaseSchema, DatabaseViolation } from "@/shared/models/DatabaseSchema";
 
-import { signale } from "../core/modules/Logger";
-import { Rule } from "../core/modules/Rule";
-
-const defaultData: DatabaseStructure = {
+const defaultData: DatabaseSchema = {
     ladder: [],
     violations: [],
 };
 
 export class Database {
-    public db: LowdbAsync<DatabaseStructure> | undefined;
+    public db: LowdbAsync<DatabaseSchema> | undefined;
 
     public async init(): Promise<void> {
         const file = `./src/db/db.json`;
         const adapter = new FileAsync(file);
-        this.db = (await low(adapter)) as LowdbAsync<DatabaseStructure>;
+        this.db = (await low(adapter)) as LowdbAsync<DatabaseSchema>;
         this.db.defaults(defaultData).write();
     }
 
@@ -86,15 +83,6 @@ export class Database {
         return all.value();
     }
 
-    public getCharacterRuleViolations(characterId: string, rule: Rule): DatabaseViolation[] {
-        if (this.db == null) return [];
-
-        return this.db
-            .get("violations")
-            .filter({ characterId: characterId, rule: rule.id })
-            .value();
-    }
-
     public existsCharacterViolation(characterId: string, violation: RuleViolation): boolean {
         if (this.db == null) return false;
 
@@ -132,7 +120,7 @@ export class Database {
         return true;
     }
 
-    public resolveViolation(character: LadderCharacter, violation: DatabaseViolation): void {
+    public resolveViolation(character: LadderCharacter, violation: RuleViolation): void {
         if (this.db == null) return;
         if (!this.existsCharacterViolation(character.character.id, violation)) return;
 

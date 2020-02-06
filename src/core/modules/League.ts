@@ -2,7 +2,7 @@ import axios from "axios";
 import querystring from "querystring";
 import joinUrl from "url-join";
 
-import { LeagueData } from "@/core/models/LeagueData";
+import { LeagueData } from "@/core/models";
 
 import { interactive } from "./Logger";
 import { RateLimiter } from "./RateLimiter";

@@ -66,6 +66,5 @@ typings/
 # VSCODE
 .vscode
 
-# Resource updater
-src/updater/PyPoE
-src/updater/RePoE
+# Database
+db.json

@@ -1,15 +1,12 @@
-import { RuleId, RuleMode, RuleViolation, SocketedItemsEntity } from "@/core/models";
-
-import { Character } from "../Character";
-import { Rule } from "../Rule";
+import { RuleId, RuleMatch, RuleMode, SocketedItemsEntity } from "@/core/models";
+import { Character, Rule } from "@/core/modules";
 
 export class GemRule extends Rule {
     constructor(mode: RuleMode, list: string[] = []) {
         super(RuleId.Gem, mode, list);
     }
 
-    public getPossibleViolations(character: Character): RuleViolation[] {
-        const violations: RuleViolation[] = [];
+    public getMatches(character: Character): RuleMatch[] {
         const gems: SocketedItemsEntity[] = [];
 
         for (const item of character.items) {
@@ -18,19 +15,21 @@ export class GemRule extends Rule {
             }
         }
 
+        const matches: RuleMatch[] = [];
         for (const gem of gems) {
             if (gem.frameType === 4) {
-                const violation: RuleViolation = {
+                const violation: RuleMatch = {
                     rule: this.id,
                     id: gem.id,
-                    text: gem.typeLine,
+                    compare: gem.typeLine,
                     display: gem.typeLine,
+                    isViolation: false,
                 };
 
-                violations.push(violation);
+                matches.push(violation);
             }
         }
 
-        return violations;
+        return matches;
     }
 }

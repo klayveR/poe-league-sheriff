@@ -1,6 +1,7 @@
+import { RuleId } from "./RuleId";
+
 export interface RuleViolation {
-    rule: string;
+    rule: RuleId;
     id: string;
-    text: string;
     display: string;
 }

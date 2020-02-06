@@ -1,11 +1,11 @@
 import config from "config";
 import express from "express";
-import path from "path";
 import { DateTime } from "luxon";
 import sassMiddleware from "node-sass-middleware";
+import path from "path";
 
 import { Database } from "@/shared/Database";
-import { CachedData, CachedLadderCharacter } from "@/shared/models/CachedData";
+import { CachedLadderCharacter, CacheSchema } from "@/shared/models/CacheSchema";
 
 const app = express();
 const port = 8080;
@@ -18,8 +18,8 @@ const luxonLocaleSettings = {
     minute: "2-digit",
 };
 
-function getCachedData(db: Database): CachedData {
-    const data: CachedData = {
+function getCachedData(db: Database): CacheSchema {
+    const data: CacheSchema = {
         ladder: [],
         violations: {},
     };

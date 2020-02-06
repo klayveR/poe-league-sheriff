@@ -1,27 +1,26 @@
-import { RuleId, RuleMode, RuleViolation } from "@/core/models";
-
-import { Character } from "../Character";
-import { Rule } from "../Rule";
+import { RuleId, RuleMatch, RuleMode } from "@/core/models";
+import { Character, Rule } from "@/core/modules";
 
 export class PassiveRule extends Rule {
     constructor(mode: RuleMode, list: string[] = []) {
         super(RuleId.Passive, mode, list);
     }
 
-    public getPossibleViolations(character: Character): RuleViolation[] {
-        const violations: RuleViolation[] = [];
+    public getMatches(character: Character): RuleMatch[] {
+        const matches: RuleMatch[] = [];
 
         for (const hash of character.passiveHashes) {
-            const violation: RuleViolation = {
+            const violation: RuleMatch = {
                 rule: this.id,
                 id: hash.toString(),
-                text: hash.toString(),
+                compare: hash.toString(),
                 display: `Allocated ${hash.toString()}`,
+                isViolation: false,
             };
 
-            violations.push(violation);
+            matches.push(violation);
         }
 
-        return violations;
+        return matches;
     }
 }

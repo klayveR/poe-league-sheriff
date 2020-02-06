@@ -1,6 +1,9 @@
-import { DatabaseViolation, RuleViolation } from "@/core/models";
+import { countBy } from "lodash";
 
-import { Database } from "../../shared/Database";
+import { RuleMatch, RuleOverrides, RuleViolation } from "@/core/models";
+import { Database } from "@/shared";
+import { DatabaseViolation } from "@/shared/models/DatabaseSchema";
+
 import { Character } from "./Character";
 import { Rule } from "./Rule";
 
@@ -21,16 +24,62 @@ export class RuleHandler {
     }
 
     public check(character: Character): void {
-        // TODO:
-        // track non violation ids
-        // track all violations instead
-        // remove conflicting after
-        for (const rule of this.rules) {
-            const violations = rule.getViolations(character);
+        const violations = this.getViolations(character);
 
-            this.checkViolations(character, violations);
-            this.checkResolved(character, violations, rule);
+        this.checkViolations(character, violations);
+        this.checkResolved(character, violations);
+    }
+
+    private getViolations(character: Character): RuleViolation[] {
+        const all: RuleMatch[] = [];
+
+        // Initially, get all instances that match the rules
+        for (const rule of this.rules) {
+            const matches = rule.getRuleMatchs(character);
+            all.push(...matches);
         }
+
+        const counts = countBy(all, "id");
+        const violations: RuleViolation[] = [];
+
+        for (const id in counts) {
+            const count = counts[id];
+            const duplicates = all.filter((violation) => violation.id === id);
+            const not = duplicates.filter((violation) => !violation.isViolation);
+
+            // If all duplicates aren't violations, skip this id
+            if (not.length === duplicates.length) {
+                continue;
+            }
+
+            // Assume the first potential violation is correct
+            let found: RuleMatch = duplicates[0];
+
+            // If there are duplicates, iterate over the following entries and find the correct one
+            if (count > 1) {
+                for (let i = 1; i < duplicates.length; i++) {
+                    const duplicate = duplicates[i];
+                    const overrides = RuleOverrides.get(duplicate.rule);
+
+                    // If the current entry overrides the previous assumption, assume this one
+                    if (overrides && overrides.includes(found.rule)) {
+                        found = duplicate;
+                    }
+                }
+            }
+
+            if (found.isViolation) {
+                const violation: RuleViolation = {
+                    rule: found.rule,
+                    id: found.id,
+                    display: found.display,
+                };
+
+                violations.push(violation);
+            }
+        }
+
+        return violations;
     }
 
     private checkViolations(character: Character, violations: RuleViolation[]): void {
@@ -39,10 +88,11 @@ export class RuleHandler {
         }
     }
 
-    private checkResolved(character: Character, violations: RuleViolation[], rule: Rule): void {
-        const dbViolations: DatabaseViolation[] = this.db.getCharacterRuleViolations(
+    private checkResolved(character: Character, violations: RuleViolation[]): void {
+        const dbViolations: DatabaseViolation[] = this.db.getCharacterViolations(
             character.data.character.id,
-            rule
+            true,
+            false
         );
 
         for (const dbViolation of dbViolations) {

@@ -1,30 +1,30 @@
-import { RuleId, RuleMode, RuleViolation, FrameType } from "@/core/models";
-
-import { Character } from "../Character";
-import { Rule } from "../Rule";
+import { FrameType, RuleId, RuleMatch, RuleMode } from "@/core/models";
+import { Character, Rule } from "@/core/modules";
+import { getItemName } from "@/core/utility/getItemName";
 
 export class ItemRarityRule extends Rule {
     constructor(mode: RuleMode, list: string[] = []) {
         super(RuleId.ItemRarity, mode, list);
     }
 
-    public getPossibleViolations(character: Character): RuleViolation[] {
-        const violations: RuleViolation[] = [];
+    public getMatches(character: Character): RuleMatch[] {
         let items = [...character.items, ...character.passiveItems];
-
         items = items.filter((item) => [0, 1, 2, 3].includes(item.frameType));
 
+        const matches: RuleMatch[] = [];
         for (const item of items) {
-            const violation: RuleViolation = {
+            const rarity = FrameType[item.frameType];
+            const violation: RuleMatch = {
                 rule: this.id,
                 id: item.id,
-                text: FrameType[item.frameType],
-                display: `${item.name} ${item.typeLine}`,
+                compare: rarity,
+                display: `${getItemName(item.name, item.typeLine)} (${rarity})`.trim(),
+                isViolation: false,
             };
 
-            violations.push(violation);
+            matches.push(violation);
         }
 
-        return violations;
+        return matches;
     }
 }

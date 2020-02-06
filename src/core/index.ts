@@ -12,6 +12,8 @@ import {
     NoPrivateProfileRule,
     PassiveRule,
     UniqueRule,
+    FlaskRarityRule,
+    ItemRarityRule,
 } from "./modules/rules";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -20,7 +22,7 @@ const debugEntry: LadderCharacter = {
     dead: false,
     online: false,
     character: {
-        name: "Klayxon",
+        name: "Cerija",
         level: 93,
         class: "Saboteur",
         id: "a593dca4e42e5914ff2cb871b6e05ff0b25a9639dd8398f220f6df956b731672",
@@ -45,8 +47,8 @@ const rules: Rule[] = [
     new GemRule(config.get("rules.gem.mode"), config.get("rules.gem.list")),
     new PassiveRule(config.get("rules.passive.mode"), config.get("rules.passive.list")),
     new CharacterClassRule(config.get("rules.class.mode"), config.get("rules.class.list")),
-    // new ItemRarityRule(config.get("rules.itemRarity.mode"), config.get("rules.itemRarity.list")),
-    // new FlaskRarityRule(config.get("rules.flaskRarity.mode"), config.get("rules.flaskRarity.list")),
+    new ItemRarityRule(config.get("rules.itemRarity.mode"), config.get("rules.itemRarity.list")),
+    new FlaskRarityRule(config.get("rules.flaskRarity.mode"), config.get("rules.flaskRarity.list")),
     new JewelRarityRule(config.get("rules.jewelRarity.mode"), config.get("rules.jewelRarity.list")),
     new ItemInfluenceRule(config.get("rules.influence.mode"), config.get("rules.influence.list")),
 ];
