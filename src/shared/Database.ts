@@ -57,6 +57,15 @@ export class Database {
         return true;
     }
 
+    public updateLadderCharacter(character: LadderCharacter): boolean {
+        if (this.db == null) return false;
+
+        signale.database(`Updating character ${character.character.name} in ladder`);
+        this.db.get("ladder").find({character: { id: character.character.id }}).assign(character).write();
+
+        return true;
+    }
+
     public getViolations(): DatabaseViolation[] {
         if (this.db == null) return [];
 

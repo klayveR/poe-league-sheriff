@@ -25,7 +25,7 @@ export class Character {
         const url = `https://www.pathofexile.com/character-window/get-items?character=${encodedCharacterName}&accountName=${encodedAccountName}`;
 
         try {
-            const response = await RateLimiter.schedule(() => axios.get(url));
+            const response = await RateLimiter.schedule(() => axios.get(url, { timeout: 30000 }));
             const data = response.data;
 
             this.items = data.items as CharacterItems;
@@ -48,7 +48,7 @@ export class Character {
         const encodedAccountName = querystring.escape(this.data.account.name);
 
         const url = `https://www.pathofexile.com/character-window/get-passive-skills?reqData=0&character=${encodedCharacterName}&accountName=${encodedAccountName}`;
-        const response = await axios.get(url);
+        const response = await axios.get(url, { timeout: 30000 });
         const data = response.data;
 
         this.passiveHashes = data.hashes;

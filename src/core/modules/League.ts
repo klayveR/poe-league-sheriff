@@ -46,7 +46,7 @@ export class League {
             `&ladderLimit=${this.offsetInc}`,
             `&ladderOffset=${offset}`
         );
-        const response = await RateLimiter.schedule(() => axios.get(url));
+        const response = await RateLimiter.schedule(() => axios.get(url, { timeout: 30000 }));
 
         const data: LeagueData = response.data as LeagueData;
         return data;

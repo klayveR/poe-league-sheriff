@@ -29,12 +29,12 @@
         "itemRarity": {
             "display": "Item Rarity",
             "mode": "whitelist",
-            "list": ["Magic"]
+            "list": ["Unique"]
         },
         "flaskRarity": {
             "display": "Flask Rarity",
-            "mode": "whitelist",
-            "list": ["Magic"]
+            "mode": "blacklist",
+            "list": []
         },
         "unique": {
             "display": "Unique Items",
