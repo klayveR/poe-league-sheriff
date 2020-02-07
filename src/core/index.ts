@@ -1,20 +1,7 @@
-import config from "config";
-
 import { Database } from "../shared/Database";
 import { LadderCharacter } from "./models/LeagueData";
-import { Character, League, Rule, RuleHandler } from "./modules";
+import { Character, League, RuleHandler } from "./modules";
 import { interactive, signale } from "./modules/Logger";
-import {
-    CharacterClassRule,
-    GemRule,
-    ItemInfluenceRule,
-    JewelRarityRule,
-    NoPrivateProfileRule,
-    PassiveRule,
-    UniqueRule,
-    FlaskRarityRule,
-    ItemRarityRule,
-} from "./modules/rules";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const debugEntry: LadderCharacter = {
@@ -41,18 +28,6 @@ const debugEntry: LadderCharacter = {
     },
 };
 
-const rules: Rule[] = [
-    new NoPrivateProfileRule(),
-    new UniqueRule(config.get("rules.unique.mode"), config.get("rules.unique.list")),
-    new GemRule(config.get("rules.gem.mode"), config.get("rules.gem.list")),
-    new PassiveRule(config.get("rules.passive.mode"), config.get("rules.passive.list")),
-    new CharacterClassRule(config.get("rules.class.mode"), config.get("rules.class.list")),
-    new ItemRarityRule(config.get("rules.itemRarity.mode"), config.get("rules.itemRarity.list")),
-    new FlaskRarityRule(config.get("rules.flaskRarity.mode"), config.get("rules.flaskRarity.list")),
-    new JewelRarityRule(config.get("rules.jewelRarity.mode"), config.get("rules.jewelRarity.list")),
-    new ItemInfluenceRule(config.get("rules.influence.mode"), config.get("rules.influence.list")),
-];
-
 (async (): Promise<void> => {
     // Database
     signale.info(`Initializing database`);
@@ -62,7 +37,8 @@ const rules: Rule[] = [
     // Rules handler
     signale.info(`Adding rules`);
     const ruleHandler = new RuleHandler(database);
-    ruleHandler.addRules(rules);
+    //ruleHandler.addRules(rules);
+    ruleHandler.enableConfigRules();
 
     // Fetch league data
     signale.start(`Fetching league data`);

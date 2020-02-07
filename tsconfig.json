@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es2019",
-        "lib": ["esnext.array"],
+        "lib": ["esnext"],
         "module": "commonjs",
         "declaration": true,
         "outDir": "./dist",
@@ -14,5 +14,5 @@
         },
         "esModuleInterop": true
     },
-    "include": ["src/**/*.ts"]
+    "include": ["src/**/*.ts", "config/**/*.ts"]
 }

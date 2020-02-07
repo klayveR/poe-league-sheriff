@@ -1,9 +1,10 @@
 import { RuleId, RuleMatch, RuleMode, SocketedItemsEntity } from "@/core/models";
-import { Character, Rule } from "@/core/modules";
+import { Character } from "@/core/modules/Character";
+import { Rule } from "@/core/modules/Rule";
 
 export class GemRule extends Rule {
-    constructor(mode: RuleMode, list: string[] = []) {
-        super(RuleId.Gem, mode, list);
+    constructor(enabled = false, mode: RuleMode = RuleMode.Blacklist, list: string[] = []) {
+        super(enabled, RuleId.Gem, mode, list);
     }
 
     public getMatches(character: Character): RuleMatch[] {

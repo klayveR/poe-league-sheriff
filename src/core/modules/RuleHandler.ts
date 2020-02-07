@@ -1,26 +1,56 @@
+import config from "config";
 import { countBy } from "lodash";
+import signale from "signale";
 
 import { RuleMatch, RuleOverrides, RuleViolation } from "@/core/models";
+import * as Rules from "@/core/modules/rules";
 import { Database } from "@/shared";
-import { DatabaseViolation } from "@/shared/models/DatabaseSchema";
+import { DatabaseViolation } from "@/shared/models";
+import { ConfigRule } from "@/shared/models/ConfigSchema";
 
 import { Character } from "./Character";
 import { Rule } from "./Rule";
 
 export class RuleHandler {
-    private rules: Rule[] = [];
+    private rules: Rule[] = [
+        new Rules.CharacterClassRule(),
+        new Rules.FlaskRarityRule(),
+        new Rules.GemRule(),
+        new Rules.ItemInfluenceRule(),
+        new Rules.ItemRarityRule(),
+        new Rules.JewelRarityRule(),
+        new Rules.NoPrivateProfileRule(),
+        new Rules.PassiveRule(),
+        new Rules.UniqueRule(),
+    ];
     public db: Database;
 
     constructor(db: Database) {
         this.db = db;
     }
 
-    public addRule(rule: Rule): void {
-        this.rules.push(rule);
-    }
+    public enableConfigRules(): void {
+        if (!config.has("rules")) {
+            return;
+        }
 
-    public addRules(rules: Rule[]): void {
-        this.rules.push(...rules);
+        signale.start("Enabling rules from config");
+
+        const configRules = config.get<{ [key: string]: ConfigRule }>("rules");
+        for (const [ruleId, rule] of Object.entries(configRules)) {
+            for (const ruleInstance of this.rules) {
+                if (ruleInstance.id !== ruleId) {
+                    continue;
+                }
+
+                if (rule.enabled) {
+                    signale.info(`${rule.display} (${rule.mode}, ${rule.list.length} in list)`);
+                    ruleInstance.enabled = true;
+                    ruleInstance.mode = rule.mode;
+                    ruleInstance.list = rule.list;
+                }
+            }
+        }
     }
 
     public check(character: Character): void {
@@ -35,8 +65,10 @@ export class RuleHandler {
 
         // Initially, get all instances that match the rules
         for (const rule of this.rules) {
-            const matches = rule.getRuleMatchs(character);
-            all.push(...matches);
+            if (rule.enabled) {
+                const matches = rule.getRuleMatchs(character);
+                all.push(...matches);
+            }
         }
 
         const counts = countBy(all, "id");

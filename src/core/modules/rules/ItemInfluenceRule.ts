@@ -1,9 +1,10 @@
 import { CharacterItem, RuleId, RuleMatch, RuleMode } from "@/core/models";
-import { Character, Rule } from "@/core/modules";
+import { Character } from "@/core/modules/Character";
+import { Rule } from "@/core/modules/Rule";
 
 export class ItemInfluenceRule extends Rule {
-    constructor(mode: RuleMode, list: string[] = []) {
-        super(RuleId.Influence, mode, list);
+    constructor(enabled = false, mode: RuleMode = RuleMode.Blacklist, list: string[] = []) {
+        super(enabled, RuleId.Influence, mode, list);
     }
 
     public getMatches(character: Character): RuleMatch[] {

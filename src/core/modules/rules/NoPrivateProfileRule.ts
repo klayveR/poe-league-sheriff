@@ -1,9 +1,10 @@
 import { RuleId, RuleMatch } from "@/core/models";
-import { Character, Rule } from "@/core/modules";
+import { Character } from "@/core/modules/Character";
+import { Rule } from "@/core/modules/Rule";
 
 export class NoPrivateProfileRule extends Rule {
-    constructor() {
-        super(RuleId.NoPrivateProfile);
+    constructor(enabled = false) {
+        super(enabled, RuleId.NoPrivateProfile);
     }
 
     public getMatches(character: Character): RuleMatch[] {

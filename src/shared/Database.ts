@@ -14,7 +14,7 @@ export class Database {
     public db: LowdbAsync<DatabaseSchema> | undefined;
 
     public async init(): Promise<void> {
-        const file = `./src/db/db.json`;
+        const file = `./db/db.json`;
         const adapter = new FileAsync(file);
         this.db = (await low(adapter)) as LowdbAsync<DatabaseSchema>;
         this.db.defaults(defaultData).write();
@@ -61,7 +61,11 @@ export class Database {
         if (this.db == null) return false;
 
         signale.database(`Updating character ${character.character.name} in ladder`);
-        this.db.get("ladder").find({character: { id: character.character.id }}).assign(character).write();
+        this.db
+            .get("ladder")
+            .find({ character: { id: character.character.id } })
+            .assign(character)
+            .write();
 
         return true;
     }
