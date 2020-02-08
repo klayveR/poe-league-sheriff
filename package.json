@@ -7,6 +7,7 @@
         "build": "tsc",
         "start": "node -r tsconfig-paths/register dist/index.js",
         "start:dev": "ts-node -r tsconfig-paths/register src/core/index.ts",
+        "start:stats": "ts-node -r tsconfig-paths/register src/core/statistics.ts",
         "serve:dev": "nodemon ./src/app/App.ts",
         "lint": "eslint --cache -f unix --ext .ts src/",
         "lint:fix": "eslint --fix --cache -f unix --ext .ts src/",

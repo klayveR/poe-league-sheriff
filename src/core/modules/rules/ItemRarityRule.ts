@@ -1,7 +1,7 @@
 import { FrameType, RuleId, RuleMatch, RuleMode } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
-import { getItemName } from "@/core/utility/getItemName";
+import { getItemName } from "@/core/utility";
 
 export class ItemRarityRule extends Rule {
     constructor(enabled = false, mode: RuleMode = RuleMode.Blacklist, list: string[] = []) {

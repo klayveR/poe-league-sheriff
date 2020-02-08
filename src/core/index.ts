@@ -60,7 +60,10 @@ const update = async (database: Database, ruleHandler: RuleHandler): Promise<voi
 
         // Add character if it has never been checked before
         if (databaseChar == null) {
-            if (!char.retired && char.character.level >= 5) {
+            if (
+                !char.retired &&
+                char.character.level >= config.get<number>("threshold.characterLevel")
+            ) {
                 checkCharacterIds.push(char.character.id);
             }
         } else if (!databaseChar.dead) {

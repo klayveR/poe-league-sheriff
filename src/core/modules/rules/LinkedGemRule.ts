@@ -2,6 +2,7 @@ import { RuleId, RuleMatch, RuleMode, SocketedItemsEntity } from "@/core/models"
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 import crypto from "crypto";
+import { getGemLevel, isGreaterEqualThreshold } from "@/core/utility";
 
 export class LinkedGemRule extends Rule {
     constructor(enabled = false, mode: RuleMode = RuleMode.Blacklist, list: string[] = []) {
@@ -25,9 +26,13 @@ export class LinkedGemRule extends Rule {
             const groups = item.sockets.map((socket) => socket.group);
 
             for (const activeGem of activeGems) {
-                const linkedSupports: SocketedItemsEntity[] = [];
+                // Skip gem if level is below threshold
+                if (!isGreaterEqualThreshold(getGemLevel(activeGem), "gemLevel")) {
+                    continue;
+                }
 
                 // Get support gems which support the current active skill gem
+                const linkedSupports: SocketedItemsEntity[] = [];
                 for (const supportGem of supportGems) {
                     if (groups[activeGem.socket] === groups[supportGem.socket]) {
                         linkedSupports.push(supportGem);

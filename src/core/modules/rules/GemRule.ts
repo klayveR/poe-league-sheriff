@@ -1,6 +1,7 @@
 import { RuleId, RuleMatch, RuleMode, SocketedItemsEntity } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
+import { getGemLevel, isGreaterEqualThreshold } from "@/core/utility";
 
 export class GemRule extends Rule {
     constructor(enabled = false, mode: RuleMode = RuleMode.Blacklist, list: string[] = []) {
@@ -20,6 +21,10 @@ export class GemRule extends Rule {
 
         const matches: RuleMatch[] = [];
         for (const gem of gems) {
+            if (!isGreaterEqualThreshold(getGemLevel(gem), "gemLevel")) {
+                continue;
+            }
+
             const match: RuleMatch = {
                 rule: this.id,
                 id: gem.id,
