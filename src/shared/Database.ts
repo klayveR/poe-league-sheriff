@@ -116,7 +116,6 @@ export class Database {
                 .find({ characterId: character.character.id, id: violation.id })
                 .set("display", violation.display)
                 .write();
-            signale.log("UPDATE LALALALA");
 
             return false;
         }
