@@ -109,7 +109,17 @@ export class Database {
 
     public addViolation(character: LadderCharacter, violation: RuleViolation): boolean {
         if (this.db == null) return false;
-        if (this.existsCharacterViolation(character.character.id, violation)) return false;
+        if (this.existsCharacterViolation(character.character.id, violation)) {
+            // Update display text if exists
+            this.db
+                .get("violations")
+                .find({ characterId: character.character.id, id: violation.id })
+                .set("display", violation.display)
+                .write();
+            signale.log("UPDATE LALALALA");
+
+            return false;
+        }
 
         const databaseViolation: DatabaseViolation = {
             characterId: character.character.id,

@@ -27,7 +27,8 @@ export class LinkedGemRule extends Rule {
 
             for (const activeGem of activeGems) {
                 // Skip gem if level is below threshold
-                if (!isGreaterEqualThreshold(getGemLevel(activeGem), "gemLevel")) {
+                const gemLevel = getGemLevel(activeGem);
+                if (!isGreaterEqualThreshold(gemLevel, "gemLevel")) {
                     continue;
                 }
 
@@ -58,7 +59,9 @@ export class LinkedGemRule extends Rule {
                     rule: this.id,
                     id: hash,
                     compare: activeGem.typeLine,
-                    display: `${activeGem.typeLine} (${socketedItemsTypeLines.join(", ")})`,
+                    display: `${activeGem.typeLine}${
+                        gemLevel != null ? ` (Level ${gemLevel})` : ``
+                    } (${socketedItemsTypeLines.join(", ")})`,
                     isViolation: false,
                 };
 

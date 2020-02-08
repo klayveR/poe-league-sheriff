@@ -62,7 +62,7 @@ const update = async (database: Database, ruleHandler: RuleHandler): Promise<voi
         if (databaseChar == null) {
             if (
                 !char.retired &&
-                char.character.level >= config.get<number>("threshold.characterLevel")
+                char.character.level >= config.get<number>("thresholds.characterLevel")
             ) {
                 checkCharacterIds.push(char.character.id);
             }

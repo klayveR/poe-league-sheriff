@@ -21,7 +21,8 @@ export class GemRule extends Rule {
 
         const matches: RuleMatch[] = [];
         for (const gem of gems) {
-            if (!isGreaterEqualThreshold(getGemLevel(gem), "gemLevel")) {
+            const gemLevel = getGemLevel(gem);
+            if (!isGreaterEqualThreshold(gemLevel, "gemLevel")) {
                 continue;
             }
 
@@ -29,7 +30,7 @@ export class GemRule extends Rule {
                 rule: this.id,
                 id: gem.id,
                 compare: gem.typeLine,
-                display: gem.typeLine,
+                display: `${gem.typeLine}${gemLevel != null ? ` (Level ${gemLevel})` : ``}`,
                 isViolation: false,
             };
 
