@@ -17,7 +17,7 @@ export class FlaskRarityRule extends Rule {
         const matches: RuleMatch[] = [];
         for (const item of items) {
             const rarity = FrameType[item.frameType];
-            const violation: RuleMatch = {
+            const match: RuleMatch = {
                 rule: this.id,
                 id: item.id,
                 compare: rarity,
@@ -25,7 +25,7 @@ export class FlaskRarityRule extends Rule {
                 isViolation: false,
             };
 
-            matches.push(violation);
+            matches.push(match);
         }
 
         return matches;

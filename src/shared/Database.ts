@@ -1,4 +1,5 @@
 import low, { LowdbAsync } from "lowdb";
+import { uniq } from "lodash";
 import { default as FileAsync } from "lowdb/adapters/FileAsync";
 
 import { LadderCharacter, RuleViolation } from "@/core/models";
@@ -8,6 +9,7 @@ import { DatabaseSchema, DatabaseViolation } from "@/shared/models/DatabaseSchem
 const defaultData: DatabaseSchema = {
     ladder: [],
     violations: [],
+    checkRequired: [],
 };
 
 export class Database {
@@ -122,9 +124,7 @@ export class Database {
             },
         };
 
-        signale.violation(
-            `Adding violation of rule "${violation.rule}" (${violation.display}, ${violation.id})`
-        );
+        signale.violation(`Rule "${violation.rule}" (${violation.display}, ${violation.id})`);
         this.db
             .get("violations")
             .push(databaseViolation)
@@ -137,9 +137,7 @@ export class Database {
         if (this.db == null) return;
         if (!this.existsCharacterViolation(character.character.id, violation)) return;
 
-        signale.resolved(
-            `Resolving violation of rule "${violation.rule}" (${violation.display}, ${violation.id})`
-        );
+        signale.resolved(`Rule "${violation.rule}" (${violation.display}, ${violation.id})`);
         this.db
             .get("violations")
             .find({ characterId: character.character.id, rule: violation.rule, id: violation.id })
@@ -148,6 +146,30 @@ export class Database {
                 level: character.character.level,
                 experience: character.character.experience,
             })
+            .write();
+    }
+
+    public getCheckRequirements(): string[] {
+        if (this.db == null) return [];
+
+        return this.db.get("checkRequired").value();
+    }
+
+    public addCheckRequirements(characterIds: string[]): void {
+        if (this.db == null) return;
+
+        let required = [...this.getCheckRequirements(), ...characterIds];
+        required = uniq(required);
+
+        this.db.set("checkRequired", required).write();
+    }
+
+    public removeCheckRequirement(characterId: string): void {
+        if (this.db == null) return;
+
+        this.db
+            .get("checkRequired")
+            .pull(characterId)
             .write();
     }
 }

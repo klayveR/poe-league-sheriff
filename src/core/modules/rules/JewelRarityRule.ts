@@ -10,12 +10,12 @@ export class JewelRarityRule extends Rule {
 
     public getMatches(character: Character): RuleMatch[] {
         let items = character.passiveItems;
-        items = items.filter((item) => [0, 1, 2, 3].includes(item.frameType));
+        items = items.filter((item) => !item.abyssJewel);
 
         const matches: RuleMatch[] = [];
         for (const item of items) {
             const rarity = FrameType[item.frameType];
-            const violation: RuleMatch = {
+            const match: RuleMatch = {
                 rule: this.id,
                 id: item.id,
                 compare: rarity,
@@ -23,7 +23,7 @@ export class JewelRarityRule extends Rule {
                 isViolation: false,
             };
 
-            matches.push(violation);
+            matches.push(match);
         }
 
         return matches;

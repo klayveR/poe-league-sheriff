@@ -8,4 +8,6 @@ export enum RuleId {
     Passive = "passive",
     FlaskRarity = "flaskRarity",
     ItemRarity = "itemRarity",
+    LinkedGem = "linkedGem",
+    AbyssJewelRarity = "abyssJewelRarity",
 }

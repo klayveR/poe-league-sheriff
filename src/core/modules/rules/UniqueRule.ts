@@ -15,7 +15,7 @@ export class UniqueRule extends Rule {
         const matches: RuleMatch[] = [];
         for (const item of items) {
             const name = getItemName(item.name, item.typeLine);
-            const violation: RuleMatch = {
+            const match: RuleMatch = {
                 rule: this.id,
                 id: item.id,
                 compare: name,
@@ -23,7 +23,7 @@ export class UniqueRule extends Rule {
                 isViolation: false,
             };
 
-            matches.push(violation);
+            matches.push(match);
         }
 
         return matches;

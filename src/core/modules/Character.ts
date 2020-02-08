@@ -1,7 +1,7 @@
 import axios from "axios";
 import querystring from "querystring";
 
-import { CharacterItems } from "@/core/models/CharacterItems";
+import { CharacterItems, SocketedItemsEntity } from "@/core/models/CharacterItems";
 import { LadderCharacter } from "@/core/models/LeagueData";
 
 import { RateLimiter } from "./RateLimiter";
@@ -11,14 +11,14 @@ export class Character {
     public data: LadderCharacter;
     public items: CharacterItems = [];
     public passiveHashes: number[] = [];
-    public passiveItems: CharacterItems = [];
+    public passiveItems: SocketedItemsEntity[] = [];
     public private = false;
 
     constructor(ladderChar: LadderCharacter) {
         this.data = ladderChar;
     }
 
-    public async getData(): Promise<void> {
+    public async getEquippedItems(): Promise<void> {
         const encodedCharacterName = querystring.escape(this.data.character.name);
         const encodedAccountName = querystring.escape(this.data.account.name);
 
@@ -29,9 +29,10 @@ export class Character {
             const data = response.data;
 
             this.items = data.items as CharacterItems;
-
-            // Remove items in inventory
-            this.items = this.items.filter((item) => item.inventoryId !== "MainInventory");
+            this.items = this.items.filter(
+                (item) =>
+                    ["MainInventory", "Weapon2", "Offhand2"].includes(item.inventoryId) === false
+            );
         } catch (error) {
             if (error.response.status === 403) {
                 this.private = true;
@@ -39,15 +40,14 @@ export class Character {
 
             throw error;
         }
-
-        await this.getPassiveSkills();
     }
 
-    private async getPassiveSkills(): Promise<void> {
+    public async getAllocatedPassives(): Promise<void> {
         const encodedCharacterName = querystring.escape(this.data.character.name);
         const encodedAccountName = querystring.escape(this.data.account.name);
 
         const url = `https://www.pathofexile.com/character-window/get-passive-skills?reqData=0&character=${encodedCharacterName}&accountName=${encodedAccountName}`;
+
         const response = await axios.get(url, { timeout: 30000 });
         const data = response.data;
 

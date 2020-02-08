@@ -12,21 +12,24 @@ import { Character } from "./Character";
 import { Rule } from "./Rule";
 
 export class RuleHandler {
-    private rules: Rule[] = [
-        new Rules.CharacterClassRule(),
-        new Rules.FlaskRarityRule(),
-        new Rules.GemRule(),
-        new Rules.ItemInfluenceRule(),
-        new Rules.ItemRarityRule(),
-        new Rules.JewelRarityRule(),
-        new Rules.NoPrivateProfileRule(),
-        new Rules.PassiveRule(),
-        new Rules.UniqueRule(),
-    ];
+    private rules: Rule[];
     public db: Database;
 
     constructor(db: Database) {
         this.db = db;
+        this.rules = [
+            new Rules.NoPrivateProfileRule(true),
+            new Rules.CharacterClassRule(),
+            new Rules.FlaskRarityRule(),
+            new Rules.GemRule(),
+            new Rules.ItemInfluenceRule(),
+            new Rules.ItemRarityRule(),
+            new Rules.JewelRarityRule(),
+            new Rules.PassiveRule(),
+            new Rules.UniqueRule(),
+            new Rules.LinkedGemRule(),
+            new Rules.AbyssJewelRarityRule(),
+        ];
     }
 
     public enableConfigRules(): void {
@@ -66,7 +69,7 @@ export class RuleHandler {
         // Initially, get all instances that match the rules
         for (const rule of this.rules) {
             if (rule.enabled) {
-                const matches = rule.getRuleMatchs(character);
+                const matches = rule.getRuleMatches(character);
                 all.push(...matches);
             }
         }

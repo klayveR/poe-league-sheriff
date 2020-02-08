@@ -25,6 +25,12 @@ const options = {
             label: "rule",
             logLevel: "info",
         },
+        bottleneck: {
+            badge: "zzZ",
+            color: "magenta",
+            label: "limiter",
+            logLevel: "info",
+        },
     },
 };
 

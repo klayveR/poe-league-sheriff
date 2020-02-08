@@ -8,17 +8,15 @@ export class ItemInfluenceRule extends Rule {
     }
 
     public getMatches(character: Character): RuleMatch[] {
-        const items = [...character.items, ...character.passiveItems];
-
         const matches: RuleMatch[] = [];
-        for (const item of items) {
+        for (const item of character.items) {
             if (!item.influences) {
                 continue;
             }
 
             Object.entries(item.influences).forEach(([type, hasInfluence]) => {
                 if (hasInfluence) {
-                    const violation: RuleMatch = {
+                    const match: RuleMatch = {
                         rule: this.id,
                         id: item.id,
                         compare: this.getUppercasedInfluence(type),
@@ -28,7 +26,7 @@ export class ItemInfluenceRule extends Rule {
                         isViolation: false,
                     };
 
-                    matches.push(violation);
+                    matches.push(match);
                 }
             });
         }

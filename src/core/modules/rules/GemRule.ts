@@ -8,7 +8,7 @@ export class GemRule extends Rule {
     }
 
     public getMatches(character: Character): RuleMatch[] {
-        const gems: SocketedItemsEntity[] = [];
+        let gems: SocketedItemsEntity[] = [];
 
         for (const item of character.items) {
             if (item.socketedItems) {
@@ -16,19 +16,19 @@ export class GemRule extends Rule {
             }
         }
 
+        gems = gems.filter((gem) => gem.frameType === 4);
+
         const matches: RuleMatch[] = [];
         for (const gem of gems) {
-            if (gem.frameType === 4) {
-                const violation: RuleMatch = {
-                    rule: this.id,
-                    id: gem.id,
-                    compare: gem.typeLine,
-                    display: gem.typeLine,
-                    isViolation: false,
-                };
+            const match: RuleMatch = {
+                rule: this.id,
+                id: gem.id,
+                compare: gem.typeLine,
+                display: gem.typeLine,
+                isViolation: false,
+            };
 
-                matches.push(violation);
-            }
+            matches.push(match);
         }
 
         return matches;

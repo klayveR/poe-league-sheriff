@@ -11,7 +11,7 @@ export class PassiveRule extends Rule {
         const matches: RuleMatch[] = [];
 
         for (const hash of character.passiveHashes) {
-            const violation: RuleMatch = {
+            const match: RuleMatch = {
                 rule: this.id,
                 id: hash.toString(),
                 compare: hash.toString(),
@@ -19,7 +19,7 @@ export class PassiveRule extends Rule {
                 isViolation: false,
             };
 
-            matches.push(violation);
+            matches.push(match);
         }
 
         return matches;

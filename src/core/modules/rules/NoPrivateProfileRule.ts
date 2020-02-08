@@ -11,7 +11,7 @@ export class NoPrivateProfileRule extends Rule {
         const matches: RuleMatch[] = [];
 
         if (character.private) {
-            const violation: RuleMatch = {
+            const match: RuleMatch = {
                 rule: this.id,
                 id: character.data.account.name,
                 compare: character.data.account.name,
@@ -19,7 +19,7 @@ export class NoPrivateProfileRule extends Rule {
                 isViolation: false,
             };
 
-            matches.push(violation);
+            matches.push(match);
         }
 
         return matches;

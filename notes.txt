@@ -7,4 +7,8 @@ https://www.pathofexile.com/character-window/get-passive-skills?reqData=1&charac
 3. check if any rules have been broken for each character
 4. check if any infractions have been solved for each character
 
-- thin about something else for rarity
+GEM: ^(?:\s+)?(.+?) \(\d+\)$
+^([a-zA-Z,]+)$
+
+- add required updated chars to db
+- remove required update from db if character is dead but has never been tracked

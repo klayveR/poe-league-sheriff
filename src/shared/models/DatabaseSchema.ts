@@ -3,6 +3,7 @@ import { LadderCharacter, RuleViolation } from "@/core/models";
 export interface DatabaseSchema {
     ladder: LadderCharacter[];
     violations: DatabaseViolation[];
+    checkRequired: string[];
 }
 
 export interface DatabaseViolation extends RuleViolation {

@@ -1,7 +1,8 @@
-import { Database } from "../shared/Database";
-import { LadderCharacter } from "./models/LeagueData";
-import { Character, League, RuleHandler } from "./modules";
-import { interactive, signale } from "./modules/Logger";
+import config from "config";
+import { Database } from "@/shared/Database";
+import { LadderCharacter } from "@/core/models/LeagueData";
+import { Character, League, RuleHandler, interactive, signale } from "@/core/modules";
+import { getPercentage } from "./utility/getPercentage";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const debugEntry: LadderCharacter = {
@@ -9,7 +10,7 @@ const debugEntry: LadderCharacter = {
     dead: false,
     online: false,
     character: {
-        name: "Cerija",
+        name: "Ectro_ZDPSLeague",
         level: 93,
         class: "Saboteur",
         id: "a593dca4e42e5914ff2cb871b6e05ff0b25a9639dd8398f220f6df956b731672",
@@ -20,13 +21,133 @@ const debugEntry: LadderCharacter = {
         },
     },
     account: {
-        name: "klayveR",
+        name: "Ectro88",
         realm: "pc",
         challenges: {
             total: 29,
         },
     },
 };
+
+const update = async (database: Database, ruleHandler: RuleHandler): Promise<void> => {
+    signale.start("Starting update process");
+
+    // Fetch league data
+    const leagueName = config.get<string>("name");
+    const league = new League(leagueName);
+    try {
+        await league.getFull();
+        interactive.success(`Fetched league data for ${league.name}`);
+    } catch (e) {
+        interactive.error(`Failed to fetch league data for ${league.name}`);
+        return;
+    }
+
+    const checkCharacterIds: string[] = [];
+    let prevPercentage = 0;
+    for (let i = 0; i < league.data.ladder.entries.length; i++) {
+        const char = league.data.ladder.entries[i];
+        const databaseChar: LadderCharacter | undefined = database.getCharacter(char.character.id);
+
+        // Only render output if percentage changed
+        const percentage = getPercentage(i + 1, league.data.ladder.entries.length);
+        if (percentage > prevPercentage) {
+            prevPercentage = percentage;
+            interactive.await(
+                `[${percentage}%] Determining which characters have to be checked for violations`
+            );
+        }
+
+        // Add character if it has never been checked before
+        if (databaseChar == null) {
+            if (!char.retired && char.character.level >= 5) {
+                checkCharacterIds.push(char.character.id);
+            }
+        } else if (!databaseChar.dead) {
+            // Add character if experience progressed
+            if (char.character.experience > databaseChar.character.experience) {
+                checkCharacterIds.push(char.character.id);
+            }
+
+            // Add character if level is 100 and player is online
+            else if (char.character.level === 100 && char.online) {
+                checkCharacterIds.push(char.character.id);
+            }
+        }
+    }
+
+    // Add check ids to database
+    database.addCheckRequirements(checkCharacterIds);
+    const dbCheckReq = database.getCheckRequirements();
+    interactive.info(`${dbCheckReq.length} characters have to be checked for violations`);
+
+    // Update ladder data in database
+    database.updateLadder(league.data.ladder.entries);
+
+    // Fetch character data for characters which have to be checked
+    signale.start(`Fetching character data and checking for violations`);
+
+    const promises = [];
+    for (let i = 0; i < dbCheckReq.length; i++) {
+        promises.push(processCharacter(dbCheckReq[i], database, ruleHandler, i, dbCheckReq.length));
+    }
+
+    await Promise.all(promises);
+    interactive.success(`Done!`);
+};
+
+async function processCharacter(
+    characterId: string,
+    database: Database,
+    ruleHandler: RuleHandler,
+    count: number,
+    total: number
+): Promise<void> {
+    const ladderChar = database.getCharacter(characterId);
+
+    if (!ladderChar) {
+        return;
+    }
+
+    let checkCharacter = true;
+    let removeRequirement = true;
+    const percentage = getPercentage(count, total);
+    const character = new Character(ladderChar);
+    try {
+        await character.getEquippedItems();
+        await character.getAllocatedPassives();
+        interactive.success(`[${percentage}%] ${ladderChar.character.name}`);
+    } catch (e) {
+        switch (e.response.status) {
+            case 403:
+                interactive.warn(
+                    `[${percentage}%] ${ladderChar.character.name} - Character tab or profile private`
+                );
+                break;
+            case 404:
+                interactive.warn(
+                    `[${percentage}%] ${ladderChar.character.name} - Character deleted`
+                );
+                checkCharacter = false;
+                break;
+            default:
+                signale.error(
+                    `[${percentage}%] ${ladderChar.character.name} - An error occured`,
+                    e.message
+                );
+                removeRequirement = false;
+                checkCharacter = false;
+        }
+    }
+
+    if (checkCharacter) {
+        ruleHandler.check(character);
+    }
+
+    if (removeRequirement) {
+        database.removeCheckRequirement(characterId);
+    }
+}
 
 (async (): Promise<void> => {
     // Database
@@ -40,71 +161,8 @@ const debugEntry: LadderCharacter = {
     //ruleHandler.addRules(rules);
     ruleHandler.enableConfigRules();
 
-    // Fetch league data
-    signale.start(`Fetching league data`);
-    const league = new League("Slippery Gucci League (PL7352)");
-    try {
-        //league.data = await league.get();
-        await league.getFull();
-        interactive.success(`Fetched league data for ${league.name}`);
-    } catch (e) {
-        interactive.error(`Failed to fetch league data for ${league.name}`);
-        return;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+        await update(database, ruleHandler);
     }
-
-    signale.start(`Determining which characters have to be checked for violations`);
-
-    // Determine which characters have to be checked for violations
-    const checkCharacters: LadderCharacter[] = [];
-    for (let i = 0; i < league.data.ladder.entries.length; i++) {
-        const char = league.data.ladder.entries[i];
-        const databaseChar: LadderCharacter | undefined = database.getCharacter(char.character.id);
-
-        interactive.await(`[${i + 1}/${league.data.ladder.entries.length}] ${char.character.name}`);
-
-        // Add character if it has never been checked before
-        if (databaseChar == null) {
-            if (!char.retired) {
-                checkCharacters.push(char);
-            }
-        } else if (!databaseChar.dead) {
-            // Add character if experience progressed
-            if (char.character.experience > databaseChar.character.experience) {
-                checkCharacters.push(char);
-            }
-
-            // Add character if level is 100 and player is online
-            else if (char.character.level === 100 && char.online) {
-                checkCharacters.push(char);
-            }
-        }
-    }
-
-    interactive.success(`${checkCharacters.length} characters have to be checked for violations`);
-
-    // Update ladder data in database
-    database.updateLadder(league.data.ladder.entries);
-
-    // Fetch character data for characters which have to be checked
-    signale.start(`Fetching character data and checking for violations`);
-    for (let i = 0; i < checkCharacters.length; i++) {
-        const ladderChar = checkCharacters[i];
-        const character = new Character(ladderChar);
-
-        interactive.await(`[${i + 1}/${checkCharacters.length}] ${ladderChar.character.name}`);
-
-        try {
-            await character.getData();
-        } catch (e) {
-            if (e.response.status !== 403) {
-                signale.error(
-                    `Failed to fetch character data for account ${character.data.account.name} (${e.message})`
-                );
-            }
-        }
-
-        ruleHandler.check(character);
-    }
-
-    interactive.success(`Done!`);
 })();

@@ -6,6 +6,7 @@ import { LeagueData } from "@/core/models";
 
 import { interactive } from "./Logger";
 import { RateLimiter } from "./RateLimiter";
+import { getPercentage } from "../utility/getPercentage";
 
 export class League {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,14 +20,15 @@ export class League {
     }
 
     public async getFull(): Promise<void> {
-        interactive.await(`[1/?] - Offset 0`);
+        interactive.await(`[0%] - Fetching league data`);
         this.data = await this.get();
 
         const pageCount = Math.ceil(this.data.ladder.total / this.offsetInc);
 
         let offset = this.offsetInc;
         while (this.data.ladder.total > offset) {
-            interactive.await(`[${offset / this.offsetInc + 1}/${pageCount}] - Offset ${offset}`);
+            const percentage = getPercentage(offset / this.offsetInc + 1, pageCount);
+            interactive.await(`[${percentage}%] - Fetching league ladder entries`);
 
             const addData = await this.get(offset);
             this.data.ladder.entries.push(...addData.ladder.entries);

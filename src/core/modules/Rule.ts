@@ -19,7 +19,7 @@ export abstract class Rule {
         this.list = list;
     }
 
-    public getRuleMatchs(character: Character): RuleMatch[] {
+    public getRuleMatches(character: Character): RuleMatch[] {
         const violations: RuleMatch[] = this.getMatches(character);
 
         for (const violation of violations) {
