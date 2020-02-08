@@ -3,6 +3,7 @@ import { Database } from "@/shared/Database";
 import { LadderCharacter } from "@/core/models/LeagueData";
 import { Character, League, RuleHandler, interactive, signale } from "@/core/modules";
 import { getPercentage } from "./utility/getPercentage";
+import { delay } from "./utility/delay";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const debugEntry: LadderCharacter = {
@@ -132,6 +133,14 @@ async function processCharacter(
                     `[${percentage}%] ${ladderChar.character.name} - Character deleted`
                 );
                 checkCharacter = false;
+                break;
+            case 429:
+                signale.error(
+                    `[${percentage}%] ${ladderChar.character.name} - Hit rate limit, pausing for 30 seconds`
+                );
+                removeRequirement = false;
+                checkCharacter = false;
+                await delay(30 * 1000);
                 break;
             default:
                 signale.error(
