@@ -1,11 +1,9 @@
-import { RuleId, RuleMatch, RuleMode } from "@/core/models";
+import { RuleId, RuleMatch } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 
 export class PassiveRule extends Rule {
-    constructor(enabled = false, mode: RuleMode = RuleMode.Blacklist, list: string[] = []) {
-        super(enabled, RuleId.Passive, mode, list);
-    }
+    public id = RuleId.Passive;
 
     public getMatches(character: Character): RuleMatch[] {
         const matches: RuleMatch[] = [];

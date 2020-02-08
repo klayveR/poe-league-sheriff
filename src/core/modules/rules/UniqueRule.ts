@@ -1,12 +1,10 @@
-import { RuleId, RuleMatch, RuleMode } from "@/core/models";
+import { RuleId, RuleMatch } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 import { getItemName } from "@/core/utility";
 
 export class UniqueRule extends Rule {
-    constructor(enabled = false, mode: RuleMode = RuleMode.Blacklist, list: string[] = []) {
-        super(enabled, RuleId.Unique, mode, list);
-    }
+    public id = RuleId.Unique;
 
     public getMatches(character: Character): RuleMatch[] {
         let items = [...character.items, ...character.passiveItems];

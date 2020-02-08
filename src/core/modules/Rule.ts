@@ -2,21 +2,22 @@ import { RuleId, RuleMatch, RuleMode } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 
 export abstract class Rule {
+    public id?: RuleId;
     public enabled: boolean;
-    public id: RuleId;
     public mode: RuleMode;
     public list: string[];
+    public threshold: number;
 
     constructor(
-        enabled: boolean,
-        id: RuleId,
-        mode: RuleMode = RuleMode.Whitelist,
-        list: string[] = []
+        enabled = false,
+        mode: RuleMode = RuleMode.Blacklist,
+        list: string[] = [],
+        threshold = 0
     ) {
         this.enabled = enabled;
-        this.id = id;
         this.mode = mode;
         this.list = list;
+        this.threshold = threshold;
     }
 
     public getRuleMatches(character: Character): RuleMatch[] {

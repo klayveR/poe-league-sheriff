@@ -1,13 +1,11 @@
-import { RuleId, RuleMatch, RuleMode, SocketedItemsEntity } from "@/core/models";
+import { RuleId, RuleMatch, SocketedItemsEntity } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 import crypto from "crypto";
-import { getGemLevel, isGreaterEqualThreshold } from "@/core/utility";
+import { getGemLevel } from "@/core/utility";
 
 export class LinkedGemRule extends Rule {
-    constructor(enabled = false, mode: RuleMode = RuleMode.Blacklist, list: string[] = []) {
-        super(enabled, RuleId.LinkedGem, mode, list);
-    }
+    public id = RuleId.LinkedGem;
 
     public getMatches(character: Character): RuleMatch[] {
         const matches: RuleMatch[] = [];
@@ -28,7 +26,7 @@ export class LinkedGemRule extends Rule {
             for (const activeGem of activeGems) {
                 // Skip gem if level is below threshold
                 const gemLevel = getGemLevel(activeGem);
-                if (!isGreaterEqualThreshold(gemLevel, "gemLevel")) {
+                if (gemLevel && gemLevel < this.threshold) {
                     continue;
                 }
 

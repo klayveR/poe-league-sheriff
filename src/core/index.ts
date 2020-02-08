@@ -62,7 +62,7 @@ const update = async (database: Database, ruleHandler: RuleHandler): Promise<voi
         if (databaseChar == null) {
             if (
                 !char.retired &&
-                char.character.level >= config.get<number>("thresholds.characterLevel")
+                char.character.level >= config.get<number>("ignoreCharactersBelowLevel")
             ) {
                 checkCharacterIds.push(char.character.id);
             }
@@ -131,11 +131,6 @@ async function processCharacter(
                 interactive.warn(
                     `[${percentage}%] ${ladderChar.character.name} - Character deleted`
                 );
-                checkCharacter = false;
-                break;
-            case 429:
-                signale.error(`[${percentage}%] ${ladderChar.character.name} - Hit rate limit`);
-                removeRequirement = false;
                 checkCharacter = false;
                 break;
             default:

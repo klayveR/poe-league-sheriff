@@ -1,12 +1,10 @@
-import { FrameType, RuleId, RuleMatch, RuleMode } from "@/core/models";
+import { FrameType, RuleId, RuleMatch } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 import { getItemName } from "@/core/utility";
 
 export class JewelRarityRule extends Rule {
-    constructor(enabled = false, mode: RuleMode = RuleMode.Blacklist, list: string[] = []) {
-        super(enabled, RuleId.JewelRarity, mode, list);
-    }
+    public id = RuleId.JewelRarity;
 
     public getMatches(character: Character): RuleMatch[] {
         let items = character.passiveItems;

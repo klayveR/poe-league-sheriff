@@ -1,9 +1,6 @@
 export default {
     name: "HC zDPS Melee League (PL7491)",
-    thresholds: {
-        gemLevel: 1,
-        characterLevel: 5,
-    },
+    ignoreCharactersBelowLevel: 10,
     rules: {
         influence: {
             enabled: false,
@@ -12,6 +9,7 @@ export default {
             list: [],
         },
         gem: {
+            threshold: 5,
             enabled: true,
             display: "Gems",
             mode: "whitelist",

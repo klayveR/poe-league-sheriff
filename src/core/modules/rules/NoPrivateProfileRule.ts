@@ -3,9 +3,7 @@ import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 
 export class NoPrivateProfileRule extends Rule {
-    constructor(enabled = false) {
-        super(enabled, RuleId.NoPrivateProfile);
-    }
+    public id = RuleId.NoPrivateProfile;
 
     public getMatches(character: Character): RuleMatch[] {
         const matches: RuleMatch[] = [];

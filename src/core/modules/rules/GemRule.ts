@@ -1,12 +1,10 @@
-import { RuleId, RuleMatch, RuleMode, SocketedItemsEntity } from "@/core/models";
+import { RuleId, RuleMatch, SocketedItemsEntity } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
-import { getGemLevel, isGreaterEqualThreshold } from "@/core/utility";
+import { getGemLevel } from "@/core/utility";
 
 export class GemRule extends Rule {
-    constructor(enabled = false, mode: RuleMode = RuleMode.Blacklist, list: string[] = []) {
-        super(enabled, RuleId.Gem, mode, list);
-    }
+    public id = RuleId.Gem;
 
     public getMatches(character: Character): RuleMatch[] {
         let gems: SocketedItemsEntity[] = [];
@@ -22,7 +20,7 @@ export class GemRule extends Rule {
         const matches: RuleMatch[] = [];
         for (const gem of gems) {
             const gemLevel = getGemLevel(gem);
-            if (!isGreaterEqualThreshold(gemLevel, "gemLevel")) {
+            if (gemLevel && gemLevel < this.threshold) {
                 continue;
             }
 

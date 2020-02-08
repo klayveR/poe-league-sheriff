@@ -51,6 +51,10 @@ export class RuleHandler {
                     ruleInstance.enabled = true;
                     ruleInstance.mode = rule.mode;
                     ruleInstance.list = rule.list;
+
+                    if (rule.threshold) {
+                        ruleInstance.threshold = rule.threshold;
+                    }
                 }
             }
         }
