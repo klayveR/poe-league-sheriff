@@ -23,7 +23,7 @@ app.use(
     sassMiddleware({
         src: path.join(__dirname, "scss"),
         dest: path.join(__dirname, "public", "css"),
-        debug: true,
+        debug: false,
         outputStyle: "compressed",
         prefix: "/css",
     })
@@ -35,6 +35,7 @@ app.get("/", (req, res) => {
     const pages = Math.ceil(sheriff.cache.ladder.length / perPage);
 
     res.render("index", {
+        lastUpdate: sheriff.cache.lastUpdate,
         leagueName: sheriff.leagueName,
         pageCount: pages,
         rules: sheriff.rules,
