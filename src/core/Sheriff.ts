@@ -7,6 +7,7 @@ import { Character, interactive, League, RuleHandler, signale } from "@/core/mod
 import { getPercentage } from "@/core/utility";
 import { Database } from "@/shared";
 import { ConfigRule, ConfigRules } from "@/shared/models";
+import { cloneDeep } from "lodash";
 
 import { getExperiencePercentage } from "./utility/getExperiencePercentage";
 
@@ -75,7 +76,7 @@ export class Sheriff {
             return;
         }
 
-        await this.determineCharactersToCheck();
+        this.determineCharactersToCheck();
 
         const dbCheckReq = this.database.getCheckRequirements();
         interactive.info(`${dbCheckReq.length} characters have to be checked for violations`);
@@ -100,23 +101,14 @@ export class Sheriff {
         signale.success(`Done!`);
     }
 
-    private async determineCharactersToCheck(): Promise<void> {
+    private determineCharactersToCheck(): void {
+        const databaseChars: LadderCharacter[] = this.database.getCharacters();
         const checkCharacterIds: string[] = [];
-        let prevPercentage = 0;
         for (let i = 0; i < this.league.data.ladder.entries.length; i++) {
             const char = this.league.data.ladder.entries[i];
-            const databaseChar: LadderCharacter | undefined = this.database.getCharacter(
-                char.character.id
+            const databaseChar = databaseChars.find(
+                (dbChar) => dbChar.character.id === char.character.id
             );
-
-            // Only render output if percentage changed
-            const percentage = getPercentage(i + 1, this.league.data.ladder.entries.length);
-            if (percentage > prevPercentage) {
-                prevPercentage = percentage;
-                interactive.await(
-                    `[${percentage}%] Determining which characters have to be checked for violations`
-                );
-            }
 
             // Add character if it has never been checked before
             if (databaseChar == null) {
@@ -141,8 +133,6 @@ export class Sheriff {
 
         // Add check ids to database
         this.database.addCheckRequirements(checkCharacterIds);
-
-        return Promise.resolve();
     }
 
     private async processCharacter(
@@ -217,7 +207,19 @@ export class Sheriff {
             const resolved = this.database.getCharacterViolations(characterId, false, true);
             const violations = [...(active as CacheViolation[]), ...(resolved as CacheViolation[])];
 
-            for (const violation of violations) {
+            // Add cached ladder character
+            const entry: CachedLadderCharacter = {
+                ...{
+                    violations: {
+                        entries: cloneDeep(violations),
+                        active: active.length,
+                        resolved: resolved.length,
+                    },
+                },
+                ...cloneDeep(character),
+            };
+
+            for (const violation of entry.violations.entries) {
                 // Format rule display name
                 if (config.has(`rules.${violation.rule}`)) {
                     violation.ruleDisplay = config.get<ConfigRule>(
@@ -255,18 +257,6 @@ export class Sheriff {
                         .toFormat("d 'days,' h 'hours,' m 'minutes'");
                 }
             }
-
-            // Add cached ladder character
-            const entry: CachedLadderCharacter = {
-                ...{
-                    violations: {
-                        entries: violations,
-                        active: active.length,
-                        resolved: resolved.length,
-                    },
-                },
-                ...character,
-            };
 
             cache.ladder.push(entry);
         }
