@@ -1,2 +1,2 @@
-export * from "./CacheSchema";
+export * from "./ConfigSchema";
 export * from "./DatabaseSchema";

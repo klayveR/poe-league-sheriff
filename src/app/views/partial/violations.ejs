@@ -1,43 +1,60 @@
-<% 
-    for(const violation of violations) { 
-    if(violation.resolved == null) { 
-    %>
-<div class="card text-white bg-darker mb-1">
-    <div class="card-body">
-        <h5 class="card-title"><%= violation.display %></h5>
-        <h6 class="card-subtitle mb-2 text-muted">
-            Rule: <span class="rule-name"><%= violation.rule %></span>
-            <span class="badge badge-warning">
-                <i class="fas fa-xs fa-exclamation-triangle"></i> Active
-            </span>
-        </h6>
-        <p class="card-text">
-            <i class="fas fa-clock fa-xs"></i> <%= violation.occured.time %>
-            <span class="text-muted">at </span>
-            Level <%= violation.occured.level %>
-            <span class="text-muted">(<%= violation.occured.experience %>)</span>
-        </p>
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="violationModalLabel">
+            <%= character.character.name %>
+            <a href="https://www.pathofexile.com/account/view-profile/<%= character.account.name %>/characters?characterName=<%= character.character.name %>"
+                target="_blank" class="text-secondary">
+                <i class="fas fa-xs fa-external-link-alt ml-1"></i>
+            </a>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" id="modal-body">
+        <% for(const violation of character.violations.entries) { %>
+        <div class="card text-white bg-darker mb-1">
+            <div class="card-body">
+                <h5 class="card-title">
+                    Rule: <span class="rule-name"><%= violation.ruleDisplay %></span>
+                    <% if(violation.resolved == null) { %>
+                    <span class="badge badge-warning float-right">
+                        <i class="fas fa-xs fa-exclamation-triangle"></i> Active
+                    </span>
+                    <% } else { %>
+                    <span class="badge badge-success float-right">
+                        <i class="fas fa-xs fa-check"></i> Resolved
+                    </span>
+                    <% } %>
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted">
+                    <%= violation.display %>
+                </h6>
+                <p class="card-text text-muted">
+                    <% if(violation.resolved == null) { %>
+                    <span class="text-white">
+                        <i class="fas fa-clock fa-xs"></i>
+                        <%= violation.occured.time %>
+                    </span>
+                    at
+                    <span class="text-white">Level <%= violation.occured.level %></span>
+                    (<span class="text-white"><%= violation.occured.experience %>%</span>)
+                    <% } else { %>
+                    Resolved after
+                    <span class="text-white">
+                        <i class="fas fa-clock fa-xs"></i>
+                        <%= violation.resolved.time %>
+                    </span><br />
+                    Violated between
+                    <span class="text-white">Level <%= violation.occured.level %></span>
+                    (<span class="text-white"><%= violation.occured.experience %>%</span>)
+                    and
+                    <span class="text-white">Level <%= violation.resolved.level %></span>
+                    (<span class="text-white"><%= violation.resolved.experience %>%</span>)
+                    <% } %>
+                </p>
+            </div>
+        </div>
+        <% } %>
     </div>
 </div>
-<% } else { %>
-<div class="card text-white bg-darker mb-1">
-    <div class="card-body">
-        <h5 class="card-title"><%= violation.display %></h5>
-        <h6 class="card-subtitle mb-2 text-muted">
-            Rule: <span class="rule-name"><%= violation.rule %></span>
-            <span class="badge badge-success">
-                <i class="fas fa-xs fa-check"></i> Resolved
-            </span>
-        </h6>
-        <p class="card-text">
-            <span class="text-muted">Resolved after</span>
-            <i class="fas fa-clock fa-xs"></i> <%= violation.resolved.time %><br />
-            <span class="text-muted">Violated between</span>
-            Level <%= violation.occured.level %> (<%= violation.occured.experience %>)
-            <span class="text-muted"> and </span>
-            Level <%= violation.resolved.level %> (<%= violation.resolved.experience %>)
-        </p>
-    </div>
-</div>
-<% } %>
-<% } %>

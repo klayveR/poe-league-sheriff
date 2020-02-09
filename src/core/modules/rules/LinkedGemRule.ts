@@ -1,7 +1,8 @@
+import crypto from "crypto";
+
 import { RuleId, RuleMatch, SocketedItemsEntity } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
-import crypto from "crypto";
 import { getGemLevel } from "@/core/utility";
 
 export class LinkedGemRule extends Rule {

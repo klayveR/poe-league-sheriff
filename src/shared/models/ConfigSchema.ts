@@ -5,9 +5,11 @@ export interface ConfigSchema {
     threshold: {
         characterLevel: number;
     };
-    rules: {
-        [key: string]: ConfigRule;
-    };
+    rules: ConfigRules;
+}
+
+export interface ConfigRules {
+    [key: string]: ConfigRule;
 }
 
 export interface ConfigRule {

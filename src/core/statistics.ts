@@ -1,13 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { signale } from "./modules";
 import config from "config";
-import { Database } from "@/shared";
-import { getPercentage } from "./utility/getPercentage";
 import { countBy, forEach } from "lodash";
+
+import { Database } from "@/shared";
 import { ConfigRule } from "@/shared/models/ConfigSchema";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { signale } from "./modules";
+import { getPercentage } from "./utility/getPercentage";
+
 function showStats(database: Database): void {
-    const rankLimit = 500;
+    const rankLimit = 1000;
     const percentage = getViolationCounts(database, rankLimit);
 
     signale.info(
@@ -20,7 +22,9 @@ function showStats(database: Database): void {
             ruleName = config.get<ConfigRule>(`rules.${key}`).display;
         }
 
-        signale.info(`${value}% violate the "${ruleName}" rule`);
+        signale.info(
+            `${value}% of alive characters (Rank <= ${rankLimit}) are violating the "${ruleName}" rule`
+        );
     });
 }
 

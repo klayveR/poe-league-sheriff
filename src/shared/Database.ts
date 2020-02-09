@@ -1,5 +1,5 @@
-import low, { LowdbAsync } from "lowdb";
 import { uniq } from "lodash";
+import low, { LowdbAsync } from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileAsync";
 
 import { LadderCharacter, RuleViolation } from "@/core/models";

@@ -1,9 +1,9 @@
 import Bottleneck from "bottleneck";
 
 export const RateLimiter = new Bottleneck({
-    reservoir: 40,
-    reservoirRefreshAmount: 40,
+    reservoir: 35,
+    reservoirRefreshAmount: 35,
     reservoirRefreshInterval: 60 * 1000,
     maxConcurrent: 5,
-    minTime: 200,
+    minTime: 500,
 });

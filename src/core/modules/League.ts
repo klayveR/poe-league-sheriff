@@ -4,9 +4,9 @@ import joinUrl from "url-join";
 
 import { LeagueData } from "@/core/models";
 
+import { getPercentage } from "../utility/getPercentage";
 import { interactive } from "./Logger";
 import { RateLimiter } from "./RateLimiter";
-import { getPercentage } from "../utility/getPercentage";
 
 export class League {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -8,7 +8,8 @@
         "start": "node -r tsconfig-paths/register dist/index.js",
         "start:dev": "ts-node -r tsconfig-paths/register src/core/index.ts",
         "start:stats": "ts-node -r tsconfig-paths/register src/core/statistics.ts",
-        "serve:dev": "nodemon ./src/app/App.ts",
+        "serve:dev": "ts-node -r tsconfig-paths/register src/app/App.ts",
+        "serve:watch": "nodemon ./src/app/App.ts",
         "lint": "eslint --cache -f unix --ext .ts src/",
         "lint:fix": "eslint --fix --cache -f unix --ext .ts src/",
         "prettier": "prettier --write \"**/*.ts\""
@@ -42,6 +43,8 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.12.1",
+        "@types/apicache": "^1.2.2",
+        "apicache": "^1.5.3",
         "axios": "^0.19.2",
         "bootstrap": "^4.4.1",
         "bottleneck": "^2.19.5",

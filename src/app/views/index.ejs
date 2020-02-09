@@ -18,8 +18,8 @@
 </head>
 
 <body class="bg-dark text-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-darker">
-        <a class="navbar-brand" href="#">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-darker border-bottom border-secondary">
+        <a class="navbar-brand" href="/">
             <img src="/assets/favicon.png" width="32" height="32" class="d-inline-block align-top" alt="">
             <%= leagueName %>
         </a>
@@ -39,15 +39,22 @@
         </div>
     </nav>
 
-    <div class="container-fluid pl-0">
+    <div class="container">
         <div class="row">
-            <div class="col-8">
+            <div class="col-12">
                 <div id="ladder"></div>
-                <div id="pagination"></div>
             </div>
-            <div class="col-4 mt-3">
-                <div class="sticky-top" id="violations"></div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div id="pagination" class="mx-auto"></div>
             </div>
+        </div>
+    </div>
+
+    <div class="modal fade bd-example-modal-xl text-dark" tabindex="-1" role="dialog"
+        aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document" id="modal-dialog">
         </div>
     </div>
 
@@ -65,33 +72,33 @@
 
     <script type="text/javascript">
         $(function () {
-            $('#ladder').load(`/ladder?page=0`);
+            let currentPage = 1;
+            const pattern = /^#page-(\d)$/m;
+            if (pattern.test(window.location.hash)) {
+                currentPage = parseInt(pattern.exec(window.location.hash)[1]);
+            }
+
+            $('#ladder').load(`/ladder/${currentPage - 1}`);
 
             $("#pagination").pagination({
                 pages: parseInt("<%= pageCount %>"),
                 ellipsePageSet: false,
+                displayedPages: 10,
+                currentPage: currentPage,
                 cssStyle: "",
                 onPageClick: (page, event) => {
-                    $('#ladder').load(`/ladder?page=${page - 1}`);
+                    $('#ladder').load(`/ladder/${page - 1}`);
                 }
             });
         });
 
-        let activeCid = 0;
-
         $("#ladder").on("click", ".clickable-row", (event) => {
             const clickedCid = $(event.currentTarget).data("cid");
 
-            console.log("test");
+            console.log(clickedCid);
 
-            $('#violations').load(`/violations?cid=${clickedCid}`, () => {
-                if (activeCid !== 0) {
-                    $(`[data-cid="${activeCid}"`).removeClass("table-active");
-                }
-
-                $(event.currentTarget).addClass("table-active");
-
-                activeCid = clickedCid;
+            $('#modal-dialog').load(`/violations/${clickedCid}`, () => {
+                $('.modal').modal();
             });
         });
     </script>

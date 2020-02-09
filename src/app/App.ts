@@ -1,88 +1,18 @@
-import config from "config";
+import apicache from "apicache";
 import express from "express";
-import { DateTime } from "luxon";
 import sassMiddleware from "node-sass-middleware";
 import path from "path";
 
-import { Database } from "@/shared/Database";
-import { CachedLadderCharacter, CacheSchema } from "@/shared/models/CacheSchema";
+import { Sheriff } from "@/core/Sheriff";
 
 const app = express();
 const port = 8080;
-const db = new Database();
-
-const luxonLocaleSettings = {
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-};
-
-function getCachedData(db: Database): CacheSchema {
-    const data: CacheSchema = {
-        ladder: [],
-        violations: {},
-    };
-
-    const characters = db.getCharacters();
-    const perPage = 15;
-
-    for (let i = 0; i < characters.length; i++) {
-        // Add a new page to ladder
-        if (i % perPage === 0) {
-            data.ladder.push([]);
-        }
-
-        // Get last page index
-        const pageIdx = data.ladder.length - 1;
-
-        const character = characters[i];
-        const violations = db.getCharacterViolations(character.character.id);
-
-        // Format violation times
-        for (const violation of violations) {
-            const occuredTime = DateTime.fromMillis(parseInt(violation.occured.time));
-            violation.occured.time = occuredTime.toLocaleString(luxonLocaleSettings);
-
-            if (violation.resolved) {
-                const resolvedTime = DateTime.fromMillis(parseInt(violation.resolved.time));
-                // eslint-disable-next-line no-useless-escape
-                violation.resolved.time = resolvedTime
-                    .diff(occuredTime)
-                    .toFormat("d 'days,' h 'hours,' m 'minutes'");
-            }
-        }
-
-        const active = violations.filter((vio) => vio.resolved == null);
-        const resolved = violations.filter((vio) => vio.resolved != null);
-
-        // Add cached ladder character
-        const entry: CachedLadderCharacter = {
-            ...{
-                violations: {
-                    active: active.length,
-                    resolved: resolved.length,
-                },
-            },
-            ...character,
-        };
-
-        data.ladder[pageIdx].push(entry);
-
-        // Add cached character violations
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        data.violations[character.character.id as any] = violations;
-    }
-
-    return data;
-}
+const sheriff = new Sheriff();
+const perPage = 25;
+const cache = apicache.middleware;
 
 (async (): Promise<void> => {
-    await db.init();
-
-    const cachedData = getCachedData(db);
-    const rules = config.get("rules");
-    const leagueName = config.get("name");
+    await sheriff.init();
 
     app.set("views", path.join(__dirname, "views"));
     app.set("view engine", "ejs");
@@ -93,41 +23,55 @@ function getCachedData(db: Database): CacheSchema {
             dest: path.join(__dirname, "public", "css"),
             debug: true,
             outputStyle: "compressed",
-            prefix: "/css", // Where prefix is at <link rel="stylesheets" href="prefix/style.css"/>
+            prefix: "/css",
         })
     );
-
     app.use(express.static(path.join(__dirname, "public")));
+    app.use(cache("10 seconds"));
 
     app.get("/", (req, res) => {
-        res.render("index", { leagueName, pageCount: cachedData.ladder.length });
-    });
+        const pages = Math.ceil(sheriff.cache.ladder.length / perPage);
 
-    app.get("/rules", (req, res) => {
-        res.render("rules", { rules });
-    });
-
-    app.get("/violations", (req, res) => {
-        if (req.query.cid == null) {
-            res.status(404).send();
-        }
-
-        res.render("partial/violations", {
-            violations: cachedData.violations[req.query.cid] || [],
+        res.render("index", {
+            leagueName: sheriff.leagueName,
+            pageCount: pages,
         });
     });
 
-    app.get("/ladder", (req, res) => {
-        if (req.query.page == null) {
-            res.status(404).send();
+    app.get("/rules", (req, res) => {
+        res.render("rules", {
+            rules: sheriff.rules,
+        });
+    });
+
+    app.get("/violations/:cid", (req, res) => {
+        const cid = req.params.cid;
+        const data = sheriff.cache.ladder.find((entry) => entry.character.id === cid);
+
+        if (data == null) {
+            res.status(400).send();
+            return;
         }
 
+        res.render("partial/violations", {
+            character: data,
+        });
+    });
+
+    app.get("/ladder/:page", (req, res) => {
+        const page = parseInt(req.params.page);
+        const start = page * perPage;
+        const end = start + perPage;
+        const entries = sheriff.cache.ladder.slice(start, end);
+
         res.render("partial/ladder", {
-            ladder: cachedData.ladder[req.query.page] || [],
+            ladder: entries || [],
         });
     });
 
     app.listen(port, () => {
         console.log(`server started at http://localhost:${port}`);
     });
+
+    sheriff.run();
 })();
