@@ -14,12 +14,21 @@ const defaultData: DatabaseSchema = {
 
 export class Database {
     public db: LowdbAsync<DatabaseSchema> | undefined;
+    private adapter: low.AdapterAsync | undefined;
 
     public async init(): Promise<void> {
         const file = `./db/db.json`;
-        const adapter = new FileAsync(file);
-        this.db = (await low(adapter)) as LowdbAsync<DatabaseSchema>;
-        this.db.defaults(defaultData).write();
+        this.adapter = new FileAsync(file);
+        this.db = (await low(this.adapter)) as LowdbAsync<DatabaseSchema>;
+        await this.db.defaults(defaultData).write();
+    }
+
+    public async write(): Promise<void> {
+        if (this.db && this.adapter) {
+            return await this.db.write();
+        } else {
+            throw new Error("Database has not been initialized");
+        }
     }
 
     public existsCharacter(id: string): boolean {
@@ -28,6 +37,7 @@ export class Database {
         return !!this.db
             .get("ladder")
             .find({ character: { id: id } })
+            .cloneDeep()
             .value();
     }
 
@@ -38,6 +48,7 @@ export class Database {
         return this.db
             .get("ladder")
             .find({ character: { id: id } })
+            .cloneDeep()
             .value();
     }
 
@@ -47,27 +58,14 @@ export class Database {
         return this.db
             .get("ladder")
             .sortBy("rank")
+            .cloneDeep()
             .value();
     }
 
     public updateLadder(ladder: LadderCharacter[]): boolean {
         if (this.db == null) return false;
 
-        signale.database(`Updating ladder`);
-        this.db.set("ladder", ladder).write();
-
-        return true;
-    }
-
-    public updateLadderCharacter(character: LadderCharacter): boolean {
-        if (this.db == null) return false;
-
-        signale.database(`Updating character ${character.character.name} in ladder`);
-        this.db
-            .get("ladder")
-            .find({ character: { id: character.character.id } })
-            .assign(character)
-            .write();
+        this.db.set("ladder", ladder).value();
 
         return true;
     }
@@ -75,7 +73,10 @@ export class Database {
     public getViolations(): DatabaseViolation[] {
         if (this.db == null) return [];
 
-        return this.db.get("violations").value();
+        return this.db
+            .get("violations")
+            .cloneDeep()
+            .value();
     }
 
     public getCharacterViolations(
@@ -88,14 +89,20 @@ export class Database {
         const all = this.db.get("violations").filter({ characterId: characterId });
 
         if (active && !resolved) {
-            return all.filter({ resolved: null }).value();
+            return all
+                .filter({ resolved: null })
+                .cloneDeep()
+                .value();
         }
 
         if (!active && resolved) {
-            return all.filter((vio) => vio.resolved != null).value();
+            return all
+                .filter((vio) => vio.resolved != null)
+                .cloneDeep()
+                .value();
         }
 
-        return all.value();
+        return all.cloneDeep().value();
     }
 
     public existsCharacterViolation(characterId: string, violation: RuleViolation): boolean {
@@ -104,6 +111,7 @@ export class Database {
         return !!this.db
             .get("violations")
             .find({ characterId: characterId, id: violation.id })
+            .cloneDeep()
             .value();
     }
 
@@ -115,7 +123,7 @@ export class Database {
                 .get("violations")
                 .find({ characterId: character.character.id, id: violation.id })
                 .set("display", violation.display)
-                .write();
+                .value();
 
             return false;
         }
@@ -137,7 +145,7 @@ export class Database {
         this.db
             .get("violations")
             .push(databaseViolation)
-            .write();
+            .value();
 
         return true;
     }
@@ -155,7 +163,7 @@ export class Database {
                 level: character.character.level,
                 experience: character.character.experience,
             })
-            .write();
+            .value();
     }
 
     public getCheckRequirements(): string[] {
@@ -170,7 +178,7 @@ export class Database {
         let required = [...this.getCheckRequirements(), ...characterIds];
         required = uniq(required);
 
-        this.db.set("checkRequired", required).write();
+        this.db.set("checkRequired", required).value();
     }
 
     public removeCheckRequirement(characterId: string): void {
@@ -179,6 +187,6 @@ export class Database {
         this.db
             .get("checkRequired")
             .pull(characterId)
-            .write();
+            .value();
     }
 }

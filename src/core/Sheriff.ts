@@ -7,7 +7,6 @@ import { Character, interactive, League, RuleHandler, signale } from "@/core/mod
 import { getPercentage } from "@/core/utility";
 import { Database } from "@/shared";
 import { ConfigRule, ConfigRules } from "@/shared/models";
-import { cloneDeep } from "lodash";
 
 import { getExperiencePercentage } from "./utility/getExperiencePercentage";
 
@@ -41,7 +40,7 @@ export class Sheriff {
 
     public async init(): Promise<void> {
         await this.database.init();
-        this.cache = this.getUpdatedCache();
+        this.updateCache();
         this.ruleHandler.enableConfigRules();
 
         this.initialized = true;
@@ -77,16 +76,15 @@ export class Sheriff {
         }
 
         this.determineCharactersToCheck();
+        await this.database.write();
 
         const dbCheckReq = this.database.getCheckRequirements();
-        interactive.info(`${dbCheckReq.length} characters have to be checked for violations`);
+        signale.info(`${dbCheckReq.length} characters have to be checked for violations`);
 
-        // Update ladder data in database
+        signale.database(`Updating ladder`);
         this.database.updateLadder(this.league.data.ladder.entries);
 
-        // Fetch character data for characters which have to be checked
         signale.start(`Fetching character data and checking for violations`);
-
         const promises = [];
         for (let i = 0; i < dbCheckReq.length; i++) {
             promises.push(this.processCharacter(dbCheckReq[i], i, dbCheckReq.length));
@@ -96,9 +94,10 @@ export class Sheriff {
         await Promise.all(promises);
 
         signale.info(`Updating cache`);
-        this.cache = this.getUpdatedCache();
+        this.updateCache();
 
-        signale.success(`Done!`);
+        signale.info(`Writing changes to database`);
+        await this.database.write();
     }
 
     private determineCharactersToCheck(): void {
@@ -186,7 +185,7 @@ export class Sheriff {
         }
     }
 
-    private getUpdatedCache(): CacheSchema {
+    private updateCache(): void {
         const cache: CacheSchema = {
             lastUpdate: Date.now().toString(),
             ladder: [],
@@ -211,12 +210,12 @@ export class Sheriff {
             const entry: CachedLadderCharacter = {
                 ...{
                     violations: {
-                        entries: cloneDeep(violations),
+                        entries: violations,
                         active: active.length,
                         resolved: resolved.length,
                     },
                 },
-                ...cloneDeep(character),
+                ...character,
             };
 
             for (const violation of entry.violations.entries) {
@@ -261,6 +260,6 @@ export class Sheriff {
             cache.ladder.push(entry);
         }
 
-        return cache;
+        this.cache = cache;
     }
 }
