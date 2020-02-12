@@ -5,17 +5,13 @@ import sassMiddleware from "node-sass-middleware";
 import path from "path";
 
 import { Sheriff } from "@/core/Sheriff";
+import { signale } from "@/shared";
 
 const app = express();
 const port = 8080;
 const sheriff = new Sheriff();
 const perPage = 25;
 const cache = apicache.middleware;
-
-(async (): Promise<void> => {
-    await sheriff.init();
-    sheriff.run();
-})();
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -67,6 +63,11 @@ app.get("/ladder/:page", (req: any, res: any) => {
     });
 });
 
-app.listen(port, () => {
-    console.log(`server started at http://localhost:${port}`);
-});
+(async (): Promise<void> => {
+    await sheriff.init();
+    sheriff.run();
+
+    app.listen(port, () => {
+        signale.start(`Server started on port ${port}`);
+    });
+})();
