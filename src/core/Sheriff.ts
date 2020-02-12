@@ -117,7 +117,7 @@ export class Sheriff {
                 ) {
                     checkCharacterIds.push(char.character.id);
                 }
-            } else if (!databaseChar.dead) {
+            } else if (!databaseChar.dead && !databaseChar.retired) {
                 // Add character if experience progressed
                 if (char.character.experience > databaseChar.character.experience) {
                     checkCharacterIds.push(char.character.id);
@@ -142,6 +142,7 @@ export class Sheriff {
         const ladderChar = this.database.getCharacter(characterId);
 
         if (!ladderChar) {
+            this.database.removeCheckRequirement(characterId);
             return;
         }
 

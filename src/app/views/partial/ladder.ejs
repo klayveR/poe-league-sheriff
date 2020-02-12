@@ -46,17 +46,14 @@
                 </div>
             </td>
             <td>
-                <span class="badge badge-secondary w-33">
-                    <%= character.violations.active + character.violations.resolved %>
-                </span>
                 <% if(character.violations.resolved > 0) { %>
-                <span class="badge badge-success w-33">
+                <span class="badge badge-success">
                     <i class="fas fa-xs fa-check"></i>
                     <%= character.violations.resolved %>
                 </span>
                 <% } %>
                 <% if(character.violations.active > 0) { %>
-                <span class="badge badge-warning w-33">
+                <span class="badge badge-warning">
                     <i class="fas fa-xs fa-exclamation-triangle"></i>
                     <%= character.violations.active %>
                 </span>

@@ -43,7 +43,9 @@ export class LinkedGemRule extends Rule {
                     continue;
                 }
 
-                const socketedItemsTypeLines = linkedSupports.map((gem) => gem.typeLine);
+                const socketedItemsTypeLines = linkedSupports.map((gem) =>
+                    gem.typeLine.replace(" Support", "")
+                );
                 const socketedItemsIds = linkedSupports.map((gem) => gem.id);
                 const idString = [activeGem.id, ...socketedItemsIds].join(",");
 
@@ -59,8 +61,8 @@ export class LinkedGemRule extends Rule {
                     id: hash,
                     compare: activeGem.typeLine,
                     display: `${activeGem.typeLine}${
-                        gemLevel != null ? ` (Level ${gemLevel})` : ``
-                    } (${socketedItemsTypeLines.join(", ")})`,
+                        gemLevel != null ? ` (${gemLevel})` : ``
+                    } - ${socketedItemsTypeLines.join(" - ")}`,
                     isViolation: false,
                 };
 

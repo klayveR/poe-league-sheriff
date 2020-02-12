@@ -28,7 +28,7 @@ export class GemRule extends Rule {
                 rule: this.id,
                 id: gem.id,
                 compare: gem.typeLine,
-                display: `${gem.typeLine}${gemLevel != null ? ` (Level ${gemLevel})` : ``}`,
+                display: `${gem.typeLine}${gemLevel != null ? ` (${gemLevel})` : ``}`,
                 isViolation: false,
             };
 
