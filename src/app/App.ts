@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import apicache from "apicache";
 import express from "express";
 import sassMiddleware from "node-sass-middleware";
@@ -24,14 +25,13 @@ app.use(
         src: path.join(__dirname, "scss"),
         dest: path.join(__dirname, "public", "css"),
         debug: false,
-        outputStyle: "compressed",
         prefix: "/css",
     })
 );
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cache("10 seconds"));
 
-app.get("/", (req, res) => {
+app.get("/", (req: any, res: any) => {
     const pages = Math.ceil(sheriff.cache.ladder.length / perPage);
 
     res.render("index", {
@@ -42,7 +42,7 @@ app.get("/", (req, res) => {
     });
 });
 
-app.get("/violations/:cid", (req, res) => {
+app.get("/violations/:cid", (req: any, res: any) => {
     const cid = req.params.cid;
     const data = sheriff.cache.ladder.find((entry) => entry.character.id === cid);
 
@@ -56,7 +56,7 @@ app.get("/violations/:cid", (req, res) => {
     });
 });
 
-app.get("/ladder/:page", (req, res) => {
+app.get("/ladder/:page", (req: any, res: any) => {
     const page = parseInt(req.params.page);
     const start = page * perPage;
     const end = start + perPage;

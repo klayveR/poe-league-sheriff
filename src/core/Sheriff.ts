@@ -3,9 +3,9 @@ import { DateTime } from "luxon";
 
 import { LadderCharacter } from "@/core/models";
 import { CachedLadderCharacter, CacheSchema, CacheViolation } from "@/core/models/CacheSchema";
-import { Character, interactive, League, RuleHandler, signale } from "@/core/modules";
+import { Character, League, RuleHandler } from "@/core/modules";
 import { getPercentage } from "@/core/utility";
-import { Database } from "@/shared";
+import { Database, interactive, signale } from "@/shared";
 import { ConfigRule, ConfigRules } from "@/shared/models";
 
 import { getExperiencePercentage } from "./utility/getExperiencePercentage";

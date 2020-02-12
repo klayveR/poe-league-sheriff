@@ -4,7 +4,7 @@
     "description": "",
     "scripts": {
         "start": "ts-node -r tsconfig-paths/register src/core/index.ts",
-        "serve": "node -r ./tsconfig-paths-bootstrap.js src/app/App.js",
+        "serve": "ts-node -r tsconfig-paths/register src/app/App.ts",
         "serve:watch": "nodemon ./src/app/App.ts",
         "lint": "eslint --cache -f unix --ext .ts src/",
         "lint:fix": "eslint --fix --cache -f unix --ext .ts src/",

@@ -3,7 +3,7 @@ import low, { LowdbAsync } from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileAsync";
 
 import { LadderCharacter, RuleViolation } from "@/core/models";
-import { signale } from "@/core/modules/Logger";
+import { signale } from "@/shared/Logger";
 import { DatabaseSchema, DatabaseViolation } from "@/shared/models/DatabaseSchema";
 
 const defaultData: DatabaseSchema = {

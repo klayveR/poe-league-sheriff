@@ -1,12 +1,10 @@
 import config from "config";
 import { countBy, forEach } from "lodash";
 
-import { Database } from "@/shared";
-import { ConfigRule } from "@/shared/models/ConfigSchema";
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { signale } from "./modules";
-import { getPercentage } from "./utility/getPercentage";
+import { getPercentage } from "@/core/utility/getPercentage";
+import { Database, signale } from "@/shared";
+import { ConfigRule } from "@/shared/models/ConfigSchema";
 
 function showStats(database: Database): void {
     const rankLimit = 1000;

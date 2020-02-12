@@ -3,9 +3,9 @@ import querystring from "querystring";
 import joinUrl from "url-join";
 
 import { LeagueData } from "@/core/models";
+import { getPercentage } from "@/core/utility/getPercentage";
+import { interactive } from "@/shared/Logger";
 
-import { getPercentage } from "../utility/getPercentage";
-import { interactive } from "./Logger";
 import { RateLimiter } from "./RateLimiter";
 
 export class League {
