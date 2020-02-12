@@ -1,5 +1,7 @@
 export * from "./AbyssJewelRarityRule";
+export * from "./AffixRule";
 export * from "./CharacterClassRule";
+export * from "./CorruptedRule";
 export * from "./FlaskRarityRule";
 export * from "./GemRule";
 export * from "./ItemInfluenceRule";

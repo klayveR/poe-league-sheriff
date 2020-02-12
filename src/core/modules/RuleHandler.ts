@@ -29,6 +29,8 @@ export class RuleHandler {
             new Rules.UniqueRule(),
             new Rules.LinkedGemRule(),
             new Rules.AbyssJewelRarityRule(),
+            new Rules.CorruptedRule(),
+            new Rules.AffixRule(),
         ];
     }
 

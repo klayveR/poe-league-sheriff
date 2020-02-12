@@ -141,7 +141,7 @@ export class Database {
             },
         };
 
-        signale.violation(`Rule "${violation.rule}" (${violation.display}, ${violation.id})`);
+        signale.violation(`Rule "${violation.rule}" (${violation.display})`);
         this.db
             .get("violations")
             .push(databaseViolation)

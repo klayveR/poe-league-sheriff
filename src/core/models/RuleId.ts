@@ -10,4 +10,6 @@ export enum RuleId {
     ItemRarity = "itemRarity",
     LinkedGem = "linkedGem",
     AbyssJewelRarity = "abyssJewelRarity",
+    Affix = "affix",
+    Corrupted = "corrupted",
 }

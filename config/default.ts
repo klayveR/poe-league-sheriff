@@ -326,5 +326,17 @@ export default {
             mode: "blacklist",
             list: [],
         },
+        affix: {
+            enabled: true,
+            display: "Affixes",
+            mode: "blacklist",
+            list: ["#% to Lightning Resistance"],
+        },
+        corrupted: {
+            enabled: true,
+            display: "Corrupted Items",
+            mode: "whitelist",
+            list: [],
+        },
     },
 };
