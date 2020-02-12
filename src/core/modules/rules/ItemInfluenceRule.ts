@@ -1,9 +1,10 @@
-import { CharacterItem, RuleId, RuleMatch } from "@/core/models";
+import { CharacterItem, RuleId, RuleMatch, CompareMode } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 
 export class ItemInfluenceRule extends Rule {
     public id = RuleId.Influence;
+    public compareMode = CompareMode.Exact;
 
     public getMatches(character: Character): RuleMatch[] {
         const matches: RuleMatch[] = [];

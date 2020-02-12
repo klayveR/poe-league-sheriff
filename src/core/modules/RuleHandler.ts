@@ -31,6 +31,7 @@ export class RuleHandler {
             new Rules.AbyssJewelRarityRule(),
             new Rules.CorruptedRule(),
             new Rules.AffixRule(),
+            new Rules.BaseTypeRule(),
         ];
     }
 

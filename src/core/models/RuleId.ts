@@ -12,4 +12,5 @@ export enum RuleId {
     AbyssJewelRarity = "abyssJewelRarity",
     Affix = "affix",
     Corrupted = "corrupted",
+    BaseType = "baseType",
 }

@@ -1,12 +1,13 @@
 import crypto from "crypto";
 
-import { RuleId, RuleMatch, SocketedItemsEntity } from "@/core/models";
+import { RuleId, RuleMatch, SocketedItemsEntity, CompareMode } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 import { getGemLevel } from "@/core/utility";
 
 export class LinkedGemRule extends Rule {
     public id = RuleId.LinkedGem;
+    public compareMode = CompareMode.Exact;
 
     public getMatches(character: Character): RuleMatch[] {
         const matches: RuleMatch[] = [];

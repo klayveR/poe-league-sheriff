@@ -1,4 +1,4 @@
-import { RuleId, RuleMatch, RuleMode } from "@/core/models";
+import { RuleId, RuleMatch, RuleMode, CompareMode } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 
 export abstract class Rule {
@@ -7,6 +7,7 @@ export abstract class Rule {
     public mode: RuleMode;
     public list: string[];
     public threshold: number;
+    public compareMode: CompareMode = CompareMode.Exact;
 
     constructor(
         enabled = false,
@@ -21,19 +22,34 @@ export abstract class Rule {
     }
 
     public getRuleMatches(character: Character): RuleMatch[] {
-        const violations: RuleMatch[] = this.getMatches(character);
+        const matches: RuleMatch[] = this.getMatches(character);
 
-        for (const violation of violations) {
-            if (this.mode === RuleMode.Whitelist && !this.list.includes(violation.compare)) {
-                violation.isViolation = true;
-            }
-
-            if (this.mode === RuleMode.Blacklist && this.list.includes(violation.compare)) {
-                violation.isViolation = true;
+        for (const match of matches) {
+            switch (this.compareMode) {
+                case CompareMode.Exact:
+                    this.determineIfMatchViolationExact(match);
+                    break;
+                case CompareMode.Include:
+                    this.determineIfMatchViolationInclude(match);
+                    break;
             }
         }
 
-        return violations;
+        return matches;
+    }
+
+    private determineIfMatchViolationExact(match: RuleMatch): void {
+        if (this.mode === RuleMode.Whitelist && !this.list.includes(match.compare)) {
+            match.isViolation = true;
+        }
+
+        if (this.mode === RuleMode.Blacklist && this.list.includes(match.compare)) {
+            match.isViolation = true;
+        }
+    }
+
+    private determineIfMatchViolationInclude(match: RuleMatch): void {
+        // TODO
     }
 
     public abstract getMatches(character: Character): RuleMatch[];

@@ -1,10 +1,11 @@
-import { FrameType, RuleId, RuleMatch } from "@/core/models";
+import { FrameType, RuleId, RuleMatch, CompareMode } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 import { getItemName } from "@/core/utility";
 
 export class FlaskRarityRule extends Rule {
     public id = RuleId.FlaskRarity;
+    public compareMode = CompareMode.Exact;
 
     public getMatches(character: Character): RuleMatch[] {
         let items = [...character.items, ...character.passiveItems];

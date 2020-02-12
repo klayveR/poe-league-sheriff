@@ -1,11 +1,11 @@
-import { FrameType, RuleId, RuleMatch, CompareMode } from "@/core/models";
+import { RuleId, RuleMatch, CompareMode } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 import { getItemName } from "@/core/utility";
 
-export class ItemRarityRule extends Rule {
-    public id = RuleId.ItemRarity;
-    public compareMode = CompareMode.Exact;
+export class BaseTypeRule extends Rule {
+    public id = RuleId.BaseType;
+    public compareMode = CompareMode.Include;
 
     public getMatches(character: Character): RuleMatch[] {
         let items = [...character.items, ...character.passiveItems];
@@ -13,12 +13,11 @@ export class ItemRarityRule extends Rule {
 
         const matches: RuleMatch[] = [];
         for (const item of items) {
-            const rarity = FrameType[item.frameType];
             const match: RuleMatch = {
                 rule: this.id,
                 id: item.id,
-                compare: rarity,
-                display: `${getItemName(item.name, item.typeLine)} (${rarity})`.trim(),
+                compare: item.typeLine,
+                display: `${getItemName(item.name, item.typeLine)}`,
                 isViolation: false,
             };
 

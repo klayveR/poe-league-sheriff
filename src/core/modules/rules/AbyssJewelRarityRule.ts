@@ -1,10 +1,11 @@
-import { FrameType, RuleId, RuleMatch, SocketedItemsEntity } from "@/core/models";
+import { FrameType, RuleId, RuleMatch, SocketedItemsEntity, CompareMode } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 import { getItemName } from "@/core/utility";
 
 export class AbyssJewelRarityRule extends Rule {
     public id = RuleId.AbyssJewelRarity;
+    public compareMode = CompareMode.Exact;
 
     public getMatches(character: Character): RuleMatch[] {
         const jewels = character.passiveItems;

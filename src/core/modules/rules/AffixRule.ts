@@ -1,10 +1,11 @@
-import { RuleId, RuleMatch } from "@/core/models";
+import { RuleId, RuleMatch, CompareMode } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 import { getItemName } from "@/core/utility";
 
 export class AffixRule extends Rule {
     public id = RuleId.Affix;
+    public compareMode = CompareMode.Include;
 
     public getMatches(character: Character): RuleMatch[] {
         const matches: RuleMatch[] = [];
@@ -15,22 +16,20 @@ export class AffixRule extends Rule {
                 continue;
             }
 
+            const pattern = /((?:[+-])?\d+(?:\.\d+)?)/g;
+
             const affixesString = item.explicitMods.join(", ");
+            const formattedAffixesString = affixesString.replace(pattern, "#");
 
-            for (const explicit of item.explicitMods) {
-                const pattern = /((?:[+-])?\d+(?:\.\d+)?)/g;
-                const affix = explicit.replace(pattern, "#");
+            const match: RuleMatch = {
+                rule: this.id,
+                id: item.id,
+                compare: formattedAffixesString,
+                display: `${getItemName(item.name, item.typeLine)} (${affixesString})`,
+                isViolation: false,
+            };
 
-                const match: RuleMatch = {
-                    rule: this.id,
-                    id: item.id,
-                    compare: affix,
-                    display: `${getItemName(item.name, item.typeLine)} (${affixesString})`,
-                    isViolation: false,
-                };
-
-                matches.push(match);
-            }
+            matches.push(match);
         }
 
         return matches;

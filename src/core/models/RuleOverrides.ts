@@ -2,10 +2,10 @@ import { RuleId } from "./RuleId";
 
 export const RuleOverrides: Map<RuleId, RuleId[]> = new Map<RuleId, RuleId[]>([
     [RuleId.LinkedGem, [RuleId.Gem, RuleId.Corrupted]],
-    [RuleId.JewelRarity, [RuleId.ItemRarity, RuleId.Corrupted]],
-    [RuleId.FlaskRarity, [RuleId.ItemRarity, RuleId.Corrupted]],
-    [RuleId.AbyssJewelRarity, [RuleId.ItemRarity, RuleId.Corrupted]],
-    [RuleId.ItemRarity, [RuleId.Corrupted]],
+    [RuleId.JewelRarity, [RuleId.ItemRarity, RuleId.Corrupted, RuleId.BaseType]],
+    [RuleId.FlaskRarity, [RuleId.ItemRarity, RuleId.Corrupted, RuleId.BaseType]],
+    [RuleId.AbyssJewelRarity, [RuleId.ItemRarity, RuleId.Corrupted, RuleId.BaseType]],
+    [RuleId.ItemRarity, [RuleId.Corrupted, RuleId.BaseType]],
     [
         RuleId.Unique,
         [
@@ -15,6 +15,7 @@ export const RuleOverrides: Map<RuleId, RuleId[]> = new Map<RuleId, RuleId[]>([
             RuleId.AbyssJewelRarity,
             RuleId.Influence,
             RuleId.Corrupted,
+            RuleId.BaseType,
         ],
     ],
 ]);

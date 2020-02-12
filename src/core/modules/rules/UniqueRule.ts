@@ -1,10 +1,11 @@
-import { RuleId, RuleMatch } from "@/core/models";
+import { RuleId, RuleMatch, CompareMode } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 import { getItemName } from "@/core/utility";
 
 export class UniqueRule extends Rule {
     public id = RuleId.Unique;
+    public compareMode = CompareMode.Exact;
 
     public getMatches(character: Character): RuleMatch[] {
         let items = [...character.items, ...character.passiveItems];

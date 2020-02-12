@@ -1,10 +1,11 @@
-import { FrameType, RuleId, RuleMatch } from "@/core/models";
+import { FrameType, RuleId, RuleMatch, CompareMode } from "@/core/models";
 import { Character } from "@/core/modules/Character";
 import { Rule } from "@/core/modules/Rule";
 import { getItemName } from "@/core/utility";
 
 export class JewelRarityRule extends Rule {
     public id = RuleId.JewelRarity;
+    public compareMode = CompareMode.Exact;
 
     public getMatches(character: Character): RuleMatch[] {
         let items = character.passiveItems;
